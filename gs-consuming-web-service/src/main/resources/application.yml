@@ -1,0 +1,11 @@
+logging:
+  level:
+    country: INFO
+    org:
+      springframework:
+        ws: INFO
+      apache:
+        cxf: INFO  
+    io:
+       spring:
+          guides: INFO
