@@ -77,7 +77,7 @@
 							<sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
 							<wsdlOptions>
 								<wsdlOption>
-									<wsdl>http://localhost:8080/ws/countries.wsdl</wsdl>
+									<wsdl>${project.basedir}/src/main/resources/countries.wsdl</wsdl>
 								</wsdlOption>
 							</wsdlOptions>
 						</configuration>
