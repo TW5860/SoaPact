@@ -11,13 +11,18 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 
 @Configuration
 public class CountryConfiguration {
+	
 	@Bean(name="endPoint")
 	public String getEndPoint() {
 		return "http://localhost:8080/ws/";
 	}
-
+	
 	@Bean
 	public CountriesPort countryProxy(@Qualifier("endPoint") String endPoint) {
+		return getCountriesFactory(endPoint);
+	}
+
+	public static CountriesPort getCountriesFactory(String endPoint) {
 		JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
 		jaxWsProxyFactoryBean.setServiceClass(CountriesPort.class);
 		jaxWsProxyFactoryBean.setAddress(endPoint);
@@ -33,7 +38,7 @@ public class CountryConfiguration {
 		jaxWsProxyFactoryBean.getInFaultInterceptors().add(loggingInInterceptor);
 		jaxWsProxyFactoryBean.getOutInterceptors().add(loggingOutInterceptor);
 		jaxWsProxyFactoryBean.getOutFaultInterceptors().add(loggingOutInterceptor);
-
 		return (CountriesPort) jaxWsProxyFactoryBean.create();
 	}
 }
+

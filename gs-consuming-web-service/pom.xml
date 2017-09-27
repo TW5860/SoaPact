@@ -44,6 +44,20 @@
 			<artifactId>jettison</artifactId>
 			<version>1.3.8</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-consumer-junit_2.11 -->
+		<dependency>
+			<groupId>au.com.dius</groupId>
+			<artifactId>pact-jvm-consumer-junit_2.11</artifactId>
+			<version>3.5.5</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
