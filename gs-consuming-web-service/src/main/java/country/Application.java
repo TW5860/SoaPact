@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import io.spring.guides.gs_producing_web_service.CountriesPort;
+import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 
 @SpringBootApplication
@@ -22,14 +24,18 @@ public class Application {
 	}
 
 	@Bean
-	CommandLineRunner lookup(CountryClient countryClient) {
+	CommandLineRunner lookup(CountriesPort countriesPort) {
 		return args -> {
 			String country = "Spain";
 
 			if (args.length > 0) {
 				country = args[0];
 			}
-			GetCountryResponse response = countryClient.getCountry(country);
+
+			GetCountryRequest request = new GetCountryRequest();
+			request.setName(country);
+			GetCountryResponse response = countriesPort.getCountry(request);
+
 			System.err.println(response.getCountry().getCapital());
 		};
 	}
