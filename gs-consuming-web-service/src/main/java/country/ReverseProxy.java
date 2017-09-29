@@ -4,14 +4,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.stream.Collectors;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.stax.StAXResult;
+import javax.xml.transform.stax.StAXSource;
+
+import org.codehaus.jettison.mapped.Configuration;
+import org.codehaus.jettison.mapped.DefaultConverter;
+import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
+
 import io.undertow.Undertow;
-import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
-import io.undertow.util.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,14 +40,13 @@ public class ReverseProxy {
 	public static void main(String[] args) throws IOException, URISyntaxException {		
 		Undertow backServer = Undertow.builder()
                 .addHttpListener(8089, "localhost")
-                .setHandler(new HttpHandler() {
-                    @Override
-                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                    	System.out.println("In back server: " + exchange.getQueryString());
-                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                        exchange.getResponseSender().send("Hello World");
-                    }
-                })
+                .setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
+					InputStream inputStream = exchange.getInputStream();
+					String bodyText = new BufferedReader(new InputStreamReader(inputStream))
+							  .lines()
+							  .collect(Collectors.joining("\n"));
+					System.out.println("Back server: " + bodyText);
+                }))
                 .build();
 		backServer.start();
 
@@ -40,13 +55,9 @@ public class ReverseProxy {
                 .setIoThreads(1)
                 .setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
 					InputStream inputStream = exchange.getInputStream();
-					String bodyText = new BufferedReader(new InputStreamReader(inputStream))
-							  .lines()
-							  .collect(Collectors.joining("\n"));
-					System.out.println("POST: " + bodyText);
+					String bodyText = xmlToJSON(inputStream);
 
 					OkHttpClient client = new OkHttpClient();
-
 					RequestBody body = RequestBody.create(JSON, bodyText);
 					Request request = new Request.Builder()
 							.url("http://localhost:8089/")
@@ -62,4 +73,26 @@ public class ReverseProxy {
 		server.start();
 	}
 
+	private static String xmlToJSON(InputStream inputStream) throws FactoryConfigurationError, XMLStreamException,
+			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+		XMLStreamReader reader = XMLInputFactory.newInstance()
+				.createXMLStreamReader(inputStream);
+		
+		Configuration jsonConfig = new Configuration();
+        DefaultConverter jsonConverter = new DefaultConverter();
+        jsonConverter.setEnforce32BitInt(true);
+        jsonConfig.setTypeConverter(jsonConverter);
+        StringWriter strWriter = new StringWriter();
+        MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
+        XMLStreamWriter writer = new MappedXMLStreamWriter(jsonConvention, strWriter);
+ 
+        TransformerFactory.newInstance()
+        		.newTransformer()
+        		.transform(new StAXSource(reader), new StAXResult(writer));
+        
+        writer.close();
+        strWriter.close();
+ 
+        return strWriter.toString();
+	}
 }
