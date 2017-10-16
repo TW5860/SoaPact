@@ -1,29 +1,9 @@
 package country;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.util.stream.Collectors;
 
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stax.StAXResult;
-import javax.xml.transform.stax.StAXSource;
-
-import org.codehaus.jettison.mapped.Configuration;
-import org.codehaus.jettison.mapped.DefaultConverter;
-import org.codehaus.jettison.mapped.MappedNamespaceConvention;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
+import org.apache.cxf.helpers.IOUtils;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpServerExchange;
@@ -37,62 +17,77 @@ import okhttp3.Response;
 public class ReverseProxy {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-	public static void main(String[] args) throws IOException, URISyntaxException {		
-		Undertow backServer = Undertow.builder()
-                .addHttpListener(8089, "localhost")
-                .setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
-					InputStream inputStream = exchange.getInputStream();
-					String bodyText = new BufferedReader(new InputStreamReader(inputStream))
-							  .lines()
-							  .collect(Collectors.joining("\n"));
-					System.out.println("Back server: " + bodyText);
-                }))
-                .build();
-		backServer.start();
+	private int listenerPort;
+	private String hostName;
+	private String backServerURL;
 
-		Undertow server = Undertow.builder()
-                .addHttpListener(8088, "localhost")
-                .setIoThreads(1)
-                .setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
-					InputStream inputStream = exchange.getInputStream();
-					String bodyText = xmlToJSON(inputStream);
+	@SuppressWarnings("unused")
+	private ReverseProxy() {};
+	
+	public ReverseProxy(String hostName, int port, String backServerURL) {
+		this.hostName = hostName;
+		listenerPort = port;
+		this.backServerURL = backServerURL;
+	}
 
-					OkHttpClient client = new OkHttpClient();
-					RequestBody body = RequestBody.create(JSON, bodyText);
-					Request request = new Request.Builder()
-							.url("http://localhost:8089/")
-							.post(body)
-							.build();
-					Response response = client.newCall(request).execute();
-					System.out.println("front: " + response.body().string());
-		
-					exchange.getResponseSender().send("Yeah!");
-				}))
-                .build();
+	private BlockingHandler reverseProxyHandler(String backServerURL) {
+		return new BlockingHandler((HttpServerExchange exchange) -> {
+			// RECEIVE
+			InputStream inputStream = exchange.getInputStream();
+			// CHANGE REQUEST
+			String changedRequest = changeRequest(inputStream);
+			// SEND REQUEST & RECEIVE RESPONSE
+			Response response = sendRequest(backServerURL, changedRequest);
+			// CHANGE RESPONSE
+			String changedResponse = changeResponse(response.body().string());
+			// SENDBACK
+			exchange.getResponseSender().send(changedResponse);
+		});
+	}
 
+	protected String changeResponse(String response) {
+		// This simple reverse proxy does not alter the response
+		return response;
+	}
+
+	protected String changeRequest(InputStream inputStream) throws IOException {
+		// This simple reverse proxy does not alter the response
+		// It just converts the stream to a string
+		return IOUtils.toString(inputStream);
+	}
+
+	private Response sendRequest(String backServerURL, String bodyText) throws IOException {
+		OkHttpClient client = new OkHttpClient();
+		RequestBody body = RequestBody.create(JSON, bodyText);
+		Request request = new Request.Builder().url(backServerURL).post(body).build();
+		return client.newCall(request).execute();
+	}
+
+	public void start() {
+		Undertow server = Undertow.builder().addHttpListener(listenerPort, hostName).setIoThreads(1)
+				.setHandler(reverseProxyHandler(backServerURL)).build();
 		server.start();
 	}
 
-	private static String xmlToJSON(InputStream inputStream) throws FactoryConfigurationError, XMLStreamException,
-			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
-		XMLStreamReader reader = XMLInputFactory.newInstance()
-				.createXMLStreamReader(inputStream);
-		
-		Configuration jsonConfig = new Configuration();
-        DefaultConverter jsonConverter = new DefaultConverter();
-        jsonConverter.setEnforce32BitInt(true);
-        jsonConfig.setTypeConverter(jsonConverter);
-        StringWriter strWriter = new StringWriter();
-        MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
-        XMLStreamWriter writer = new MappedXMLStreamWriter(jsonConvention, strWriter);
- 
-        TransformerFactory.newInstance()
-        		.newTransformer()
-        		.transform(new StAXSource(reader), new StAXResult(writer));
-        
-        writer.close();
-        strWriter.close();
- 
-        return strWriter.toString();
-	}
+	// TODO: CONVERT EXAMPLES TO TEST CASES
+	// EXAMPLE
+	//
+//	 public static void main(String args[]) {
+//	 startBackServerWithStaticResponse("localhost", 8081, "{ast:\"asd\"}");
+//	 new ReverseProxy("localhost", 8080, "http://localhost:8081").start();
+//	 }
+
+	// EXAMPLE BACKSERVER
+	//
+//	protected static void startBackServerWithStaticResponse(String hostname, int port, String response) {
+//		Undertow backServer = Undertow.builder().addHttpListener(port, hostname)
+//				.setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
+//					InputStream inputStream = exchange.getInputStream();
+//					String bodyText = new BufferedReader(new InputStreamReader(inputStream)).lines()
+//							.collect(Collectors.joining("\n"));
+//					System.out.println("Received Request Backserver: " + bodyText);
+//					exchange.getResponseSender().send(response);
+//				})).build();
+//		backServer.start();
+//	}
 }
