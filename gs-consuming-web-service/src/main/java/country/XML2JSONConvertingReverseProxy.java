@@ -25,6 +25,10 @@ import org.json.XML;
 
 public class XML2JSONConvertingReverseProxy extends ReverseProxy {
 
+	public XML2JSONConvertingReverseProxy(String hostName, int port, String backServerURL) {
+		super(hostName, port, backServerURL);
+	}
+
 	@Override
 	protected String changeResponse(String string) {
 		return jsonToXml(string);
