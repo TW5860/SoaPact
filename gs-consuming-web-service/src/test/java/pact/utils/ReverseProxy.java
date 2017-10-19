@@ -1,4 +1,4 @@
-package country;
+package pact.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,26 +68,4 @@ public class ReverseProxy {
 				.setHandler(reverseProxyHandler(backServerURL)).build();
 		server.start();
 	}
-
-	// TODO: CONVERT EXAMPLES TO TEST CASES
-	// EXAMPLE
-	//
-//	 public static void main(String args[]) {
-//	 startBackServerWithStaticResponse("localhost", 8081, "{ast:\"asd\"}");
-//	 new ReverseProxy("localhost", 8080, "http://localhost:8081").start();
-//	 }
-
-	// EXAMPLE BACKSERVER
-	//
-//	protected static void startBackServerWithStaticResponse(String hostname, int port, String response) {
-//		Undertow backServer = Undertow.builder().addHttpListener(port, hostname)
-//				.setHandler(new BlockingHandler((HttpServerExchange exchange) -> {
-//					InputStream inputStream = exchange.getInputStream();
-//					String bodyText = new BufferedReader(new InputStreamReader(inputStream)).lines()
-//							.collect(Collectors.joining("\n"));
-//					System.out.println("Received Request Backserver: " + bodyText);
-//					exchange.getResponseSender().send(response);
-//				})).build();
-//		backServer.start();
-//	}
 }

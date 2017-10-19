@@ -1,4 +1,4 @@
-package country;
+package pact.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +7,6 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.json.JSONML;
-import org.json.JSONObject;
 
 public class JSONMLConvertingReverseProxy extends ReverseProxy {
 	
@@ -18,7 +16,7 @@ public class JSONMLConvertingReverseProxy extends ReverseProxy {
 
 	@Override
 	protected String changeResponse(String string) {
-		return jsonToXml(string);
+		return JSONMLConverter.jsonToXml(string);
 	}
 	
 	@Override
@@ -31,23 +29,11 @@ public class JSONMLConvertingReverseProxy extends ReverseProxy {
 		}
 	}
 
-	public static String jsonToXml(String json) {
-		JSONObject jsonObject = new JSONObject(json);
-		String xml = JSONML.toString(jsonObject);
-		System.out.println("Converted JSON2XML:" + xml);
-		return xml;
-	}
-	
-	public static String xmlToJSON(String xml) {
-		return JSONML.toJSONObject(xml).toString();
-	}
-
 	public static String xmlToJSON(InputStream inputStream) throws IOException {
 		if (inputStream.available() == -1)
 			return "{}";
 		
 		String xml = IOUtils.toString(inputStream); 
-		return xmlToJSON(xml);
+		return JSONMLConverter.xmlToJSON(xml);
 	}
-
 }
