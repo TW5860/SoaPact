@@ -23,6 +23,8 @@ import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.json.JSONObject;
 import org.json.XML;
 
+import com.google.gson.JsonObject;
+
 public class XML2JSONConvertingReverseProxy extends ReverseProxy {
 
 	public XML2JSONConvertingReverseProxy(String hostName, int port, String backServerURL) {
@@ -45,13 +47,18 @@ public class XML2JSONConvertingReverseProxy extends ReverseProxy {
 		}
 	}
 
-	private static String jsonToXml(String responseText) {
+	public static String jsonToXml(String responseText) {
 		JSONObject json = new JSONObject(responseText);
 		String xml = XML.toString(json);
+		System.out.println("Converted JSON2XML:" + xml);
 		return xml;
 	}
+	
+	public static String xmlToJSON(String input) {
+		return XML.toJSONObject(input).toString();
+	}
 
-	private static String xmlToJSON(InputStream inputStream) throws FactoryConfigurationError, XMLStreamException,
+	public static String xmlToJSON(InputStream inputStream) throws FactoryConfigurationError, XMLStreamException,
 			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
 		if (inputStream.available() == -1)
 			return "{}";
@@ -69,8 +76,9 @@ public class XML2JSONConvertingReverseProxy extends ReverseProxy {
 
 		writer.close();
 		strWriter.close();
-
-		return strWriter.toString();
+		String json = strWriter.toString();
+		System.out.println("Converted XML2JSON:" + json);
+		return json;
 	}
 
 }
