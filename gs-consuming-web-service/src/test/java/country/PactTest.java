@@ -1,16 +1,10 @@
 package country;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.http.Consts;
 import org.apache.http.entity.ContentType;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
@@ -56,7 +50,7 @@ public class PactTest {
 		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, config, new PactTestRun() {
 			@Override
 			public void run(MockServer mockServer) throws IOException {
-				CountriesPort countriesPort = CountryConfiguration.getCountriesFactory(mockServer.getUrl());
+				CountriesPort countriesPort = CountryConfiguration.getCountriesPort(mockServer.getUrl());
 				GetCountryRequest request = new GetCountryRequest();
 				request.setName("Spain");
 				GetCountryResponse response = countriesPort.getCountry(request);

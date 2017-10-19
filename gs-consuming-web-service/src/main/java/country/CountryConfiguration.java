@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 
+@SuppressWarnings("deprecation")
 @Configuration
 public class CountryConfiguration {
 	
@@ -18,11 +19,11 @@ public class CountryConfiguration {
 	}
 	
 	@Bean
-	public CountriesPort countryProxy(@Qualifier("endPoint") String endPoint) {
-		return getCountriesFactory(endPoint);
+	public CountriesPort countryPort(@Qualifier("endPoint") String endPoint) {
+		return getCountriesPort(endPoint);
 	}
 
-	public static CountriesPort getCountriesFactory(String endPoint) {
+	public static CountriesPort getCountriesPort(String endPoint) {
 		JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
 		jaxWsProxyFactoryBean.setServiceClass(CountriesPort.class);
 		jaxWsProxyFactoryBean.setAddress(endPoint);
