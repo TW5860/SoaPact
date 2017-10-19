@@ -17,13 +17,13 @@ public class ConverterTest {
 
 	@Test
 	public void shouldConvertFromSimpleXmlToJson() {
-		String json = XML2JSONConvertingReverseProxy.xmlToJSON("<xml>hallo</xml>");
+		String json = JSONMLConvertingReverseProxy.xmlToJSON("<xml>hallo</xml>");
 		assertEquals(json, "{\"xml\":\"hallo\"}");
 	}
 
 	@Test
 	public void shouldKeepXmlTagsToJson() {
-		String json = XML2JSONConvertingReverseProxy.xmlToJSON("<xml src=\"hallo\">hallo</xml>");
+		String json = JSONMLConvertingReverseProxy.xmlToJSON("<xml src=\"hallo\">hallo</xml>");
 		assertEquals(json, "{\"xml\":{\"src\":\"hallo\",\"content\":\"hallo\"}}");
 	}
 
