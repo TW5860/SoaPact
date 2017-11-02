@@ -9,12 +9,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stax.StAXResult;
-import javax.xml.transform.stax.StAXSource;
 
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.DefaultConverter;
@@ -26,6 +24,7 @@ public class JSONXMLConverter {
 
 	static {
 		defaultJSONConfig = new Configuration();
+		defaultJSONConfig.setJsonNamespaceSeparator("#");
 	}
 
 	public static Configuration getDefaultJSONConfig() {
@@ -49,9 +48,40 @@ public class JSONXMLConverter {
 		MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
 		XMLStreamWriter xmlWriter = new MappedXMLStreamWriter(jsonConvention, writer);
 
-		TransformerFactory.newInstance().newTransformer().transform(new StAXSource(xmlReader),
-				new StAXResult(xmlWriter));
+		while (xmlReader.hasNext()) {
+            copyEvent(xmlReader, xmlWriter);
+            xmlReader.next();
+        }
+        copyEvent(xmlReader, xmlWriter);
 
 		xmlWriter.close();
+	}
+	
+	private static void copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter) throws XMLStreamException {
+		switch (xmlReader.getEventType()) {
+		case XMLEvent.START_DOCUMENT:
+			xmlWriter.writeStartDocument("1.0");
+			break;
+		case XMLEvent.END_DOCUMENT:
+			xmlWriter.writeEndDocument();
+			break;
+		case XMLEvent.START_ELEMENT:
+			xmlWriter.writeStartElement(
+					xmlReader.getPrefix(),
+					xmlReader.getLocalName(),
+					xmlReader.getNamespaceURI());
+			break;
+		case XMLEvent.END_ELEMENT:
+			xmlWriter.writeEndElement();
+			break;
+		case XMLEvent.SPACE:
+			break;
+		case XMLEvent.CHARACTERS:
+			xmlWriter.writeCharacters(xmlReader.getTextCharacters(), xmlReader.getTextStart(), xmlReader.getTextLength());
+			break;
+		case XMLEvent.CDATA:
+			xmlWriter.writeCData(xmlReader.getText());
+			break;
+		}
 	}
 }
