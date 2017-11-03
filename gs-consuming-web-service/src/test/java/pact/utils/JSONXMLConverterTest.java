@@ -43,12 +43,10 @@ public class JSONXMLConverterTest {
 
 	@Test
 	public void xmlToJSON_convertsCustomXMLNamespaces() throws Exception {
-		Configuration jsonConfig = new Configuration();
-		Map<String, String> xmlToJsonNamespaces = new HashMap<String, String>();
-		xmlToJsonNamespaces.put("http://ze/ns1", "NN1");
-		jsonConfig.setXmlToJsonNamespaces(xmlToJsonNamespaces);
-		jsonConfig.setJsonNamespaceSeparator("#");
-		jsonConfig.setIgnoreNamespaces(false);
+		Configuration jsonConfig = JSONXMLConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://ze/ns1", "NN1");
+
 		JSONAssert.assertEquals("{\"NN1#a\": {b: \"xxx\", c: \"yyy\"}}",
 				convertJSONToXML("<n1:a xmlns:n1=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></n1:a>",
 								 jsonConfig), true);

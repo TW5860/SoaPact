@@ -22,18 +22,20 @@ import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 public class JSONXMLConverter {
 	private static Configuration defaultJSONConfig;
 
-	static {
-		defaultJSONConfig = new Configuration();
-		defaultJSONConfig.setJsonNamespaceSeparator("#");
+	public static Configuration makeDefaultJSONConfig() {
+		Configuration config = new Configuration();
+		config.setJsonNamespaceSeparator("#");
+		
+		return config;
 	}
-
-	public static Configuration getDefaultJSONConfig() {
-		return defaultJSONConfig;
+	
+	static {
+		defaultJSONConfig = makeDefaultJSONConfig();
 	}
 
 	public static void xmlToJSON(Reader reader, Writer writer) throws FactoryConfigurationError, XMLStreamException,
 			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
-		xmlToJSON(reader, writer, getDefaultJSONConfig());
+		xmlToJSON(reader, writer, defaultJSONConfig);
 	}
 
 	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig)
