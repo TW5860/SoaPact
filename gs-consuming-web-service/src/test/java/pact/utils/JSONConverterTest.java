@@ -3,7 +3,6 @@ package pact.utils;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.jettison.mapped.Configuration;

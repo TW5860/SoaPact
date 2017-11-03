@@ -23,10 +23,14 @@ public class JSONConverter {
 	private static Configuration defaultJSONConfig;
 
 	public static Configuration makeDefaultJSONConfig() {
-		Configuration config = new Configuration();
-		config.setJsonNamespaceSeparator("#");
+		Configuration jsonConfig = new Configuration();
+		jsonConfig.setJsonNamespaceSeparator("#");
 		
-		return config;
+		DefaultConverter jsonConverter = new DefaultConverter();
+		jsonConverter.setEnforce32BitInt(true);
+		jsonConfig.setTypeConverter(jsonConverter);
+
+		return jsonConfig;
 	}
 	
 	static {
@@ -42,10 +46,6 @@ public class JSONConverter {
 			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, IOException {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
-
-		DefaultConverter jsonConverter = new DefaultConverter();
-		jsonConverter.setEnforce32BitInt(true);
-		jsonConfig.setTypeConverter(jsonConverter);
 
 		MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
 		XMLStreamWriter xmlWriter = new MappedXMLStreamWriter(jsonConvention, writer);
