@@ -5,10 +5,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class FileUtil {
+public class FileReader {
 
 	public static String readFile(String filename, Charset encoding) {
-		ClassLoader classLoader = FileUtils.class.getClassLoader();
+		ClassLoader classLoader = FileReader.class.getClassLoader();
 		String path = classLoader.getResource(filename).getPath();
 		byte[] encoded;
 		try {

@@ -18,7 +18,7 @@ import au.com.dius.pact.model.RequestResponsePact;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
-import pact.utils.FileUtils;
+import pact.utils.FileReader;
 
 public class PactTest {
 
@@ -45,7 +45,7 @@ public class PactTest {
 	}
 
 	private static RequestResponsePact buildPact() {
-		String xmlResponse = FileUtils.readFile("ValidSoapResponse.xml", Charset.defaultCharset());
+		String xmlResponse = FileReader.readFile("ValidSoapResponse.xml", Charset.defaultCharset());
 		
 		RequestResponsePact pact = ConsumerPactBuilder
 				.consumer("Countries consumer")
