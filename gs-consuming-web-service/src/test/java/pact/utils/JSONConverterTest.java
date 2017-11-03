@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import org.codehaus.jettison.mapped.Configuration;
-import org.json.JSONException;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 

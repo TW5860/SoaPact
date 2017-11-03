@@ -8,8 +8,6 @@ import country.CountryConfiguration;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
-import pact.utils.JSONMLConvertingReverseProxy;
-import pact.utils.StaticBackendServer;
 
 public class ReverseProxySoapTest {
 
