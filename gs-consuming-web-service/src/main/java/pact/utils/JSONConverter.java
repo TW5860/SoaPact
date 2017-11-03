@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -17,9 +18,11 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.mapped.Configuration;
 import org.codehaus.jettison.mapped.DefaultConverter;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamReader;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 public class JSONConverter {
@@ -51,13 +54,18 @@ public class JSONConverter {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 
+		xmlReaderToWriter(xmlReader, xmlWriter);
+
+		xmlWriter.close();
+	}
+
+	private static void xmlReaderToWriter(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter)
+			throws XMLStreamException {
 		while (xmlReader.hasNext()) {
             copyEvent(xmlReader, xmlWriter);
             xmlReader.next();
         }
         copyEvent(xmlReader, xmlWriter);
-
-		xmlWriter.close();
 	}
 	
 	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer) throws JAXBException {
@@ -70,6 +78,26 @@ public class JSONConverter {
 		JAXBContext jc = JAXBContext.newInstance(cls);
 		Marshaller marshaller = jc.createMarshaller();
         marshaller.marshal(obj, xmlWriter);
+	}
+	
+	public static void jsonToXML(String jsonText, Writer writer)
+			throws JSONException, XMLStreamException {
+		jsonToXML(jsonText, writer, defaultJSONConfig);
+	}
+	
+	public static void jsonToXML(String jsonText, Writer writer, Configuration jsonConfig)
+			throws JSONException, XMLStreamException {
+		// Jettison includes its own version of the JSONObject class :-(
+		org.codehaus.jettison.json.JSONObject jsonObj = new org.codehaus.jettison.json.JSONObject(jsonText);
+		MappedNamespaceConvention con = new MappedNamespaceConvention(jsonConfig);
+		XMLStreamReader xmlReader = new MappedXMLStreamReader(jsonObj, con);
+		
+		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
+		XMLStreamWriter xmlWriter = outputFactory.createXMLStreamWriter(writer);
+		
+		xmlReaderToWriter(xmlReader, xmlWriter);
+		
+		xmlWriter.close();
 	}
 
 	private static XMLStreamWriter makeJSONXMLStreamWriter(Writer writer, Configuration jsonConfig) {
