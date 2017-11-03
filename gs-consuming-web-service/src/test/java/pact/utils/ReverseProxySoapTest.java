@@ -1,9 +1,10 @@
-package country;
+package pact.utils;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import country.CountryConfiguration;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
