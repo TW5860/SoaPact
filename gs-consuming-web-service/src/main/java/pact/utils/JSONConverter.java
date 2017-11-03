@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,9 +49,7 @@ public class JSONConverter {
 			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, IOException {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
-
-		MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
-		XMLStreamWriter xmlWriter = new MappedXMLStreamWriter(jsonConvention, writer);
+		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 
 		while (xmlReader.hasNext()) {
             copyEvent(xmlReader, xmlWriter);
@@ -57,6 +58,24 @@ public class JSONConverter {
         copyEvent(xmlReader, xmlWriter);
 
 		xmlWriter.close();
+	}
+	
+	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer) throws JAXBException {
+		objToJSON(obj, cls, writer, defaultJSONConfig);
+	}
+
+	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer,
+			Configuration jsonConfig) throws JAXBException {
+		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
+		JAXBContext jc = JAXBContext.newInstance(cls);
+		Marshaller marshaller = jc.createMarshaller();
+        marshaller.marshal(obj, xmlWriter);
+	}
+
+	private static XMLStreamWriter makeJSONXMLStreamWriter(Writer writer, Configuration jsonConfig) {
+		MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
+		XMLStreamWriter xmlWriter = new MappedXMLStreamWriter(jsonConvention, writer);
+		return xmlWriter;
 	}
 	
 	private static void copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter) throws XMLStreamException {
