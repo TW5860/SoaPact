@@ -10,12 +10,12 @@ import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-public class JSONXMLConverterTest {
+public class JSONConverterTest {
 	private String convertJSONToXML(String xml) throws Exception {
 		Reader reader = new StringReader(xml);
 		StringWriter writer = new StringWriter();
 
-		JSONXMLConverter.xmlToJSON(reader, writer);
+		JSONConverter.xmlToJSON(reader, writer);
 
 		return writer.toString();
 	}
@@ -24,7 +24,7 @@ public class JSONXMLConverterTest {
 		Reader reader = new StringReader(xml);
 		StringWriter writer = new StringWriter();
 
-		JSONXMLConverter.xmlToJSON(reader, writer, jsonConfig);
+		JSONConverter.xmlToJSON(reader, writer, jsonConfig);
 
 		return writer.toString();
 	}
@@ -43,7 +43,7 @@ public class JSONXMLConverterTest {
 
 	@Test
 	public void xmlToJSON_convertsCustomXMLNamespaces() throws Exception {
-		Configuration jsonConfig = JSONXMLConverter.makeDefaultJSONConfig();
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
 		namespaces.put("http://ze/ns1", "NN1");
 

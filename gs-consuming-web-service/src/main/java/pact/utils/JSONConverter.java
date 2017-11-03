@@ -19,7 +19,7 @@ import org.codehaus.jettison.mapped.DefaultConverter;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
-public class JSONXMLConverter {
+public class JSONConverter {
 	private static Configuration defaultJSONConfig;
 
 	public static Configuration makeDefaultJSONConfig() {
