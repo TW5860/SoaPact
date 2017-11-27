@@ -26,16 +26,15 @@ public class PactTest {
 	public void testPact() {
 		RequestResponsePact pact = buildPact();
 		MockProviderConfig createDefault = MockProviderConfig.createDefault();
-		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, createDefault, new PactTestRun() {
-			@Override
-			public void run(MockServer mockServer) throws IOException {
+		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, createDefault, 
+			mockServer -> {
 				CountriesPort countriesPort = CountryConfiguration.getCountriesPort(mockServer.getUrl());
 				GetCountryRequest request = new GetCountryRequest();
 				request.setName("Spain");
 				GetCountryResponse response = countriesPort.getCountry(request);
 				assertEquals(response.getCountry().getCapital(), "Madrid");
 			}
-		});
+		);
 		
 		if (result instanceof PactVerificationResult.Error) {
 			throw new RuntimeException(((PactVerificationResult.Error) result).getError());
@@ -56,7 +55,7 @@ public class PactTest {
 				.willRespondWith()
 				.status(200)
 				.body(xmlResponse,
-						ContentType.TEXT_XML)
+					  ContentType.TEXT_XML)
 				.toPact();
 		return pact;
 	}
