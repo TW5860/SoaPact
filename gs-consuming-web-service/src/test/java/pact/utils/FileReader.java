@@ -6,6 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileReader {
+	
+	public static String readFile(String filename) {
+		return readFile(filename, Charset.defaultCharset());
+	}
 
 	public static String readFile(String filename, Charset encoding) {
 		ClassLoader classLoader = FileReader.class.getClassLoader();
@@ -14,7 +18,7 @@ public class FileReader {
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));
 		} catch (IOException e) {
-			return "";
+			throw new RuntimeException(e);
 		}
 		return new String(encoded, encoding);
 	}
