@@ -6,10 +6,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import country.CountryConfiguration;
-import io.spring.guides.gs_producing_web_service.CountriesPort;
-import io.spring.guides.gs_producing_web_service.GetCountryRequest;
-import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
