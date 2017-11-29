@@ -20,8 +20,8 @@ public class ReverseProxyTest {
 		// Prepare:
 
 		// End server.
-		String staticResponse = "Zis is ze responze!";
-		StaticBackendServer endServer = new StaticBackendServer("localhost", 9999, staticResponse);
+		String responseText = "Zis is ze responze!";
+		StaticBackendServer endServer = new StaticBackendServer("localhost", 9999, responseText);
 		endServer.start();
 
 		// HTTP client.
@@ -31,11 +31,13 @@ public class ReverseProxyTest {
 		ReverseProxy proxy = new ReverseProxy("localhost", 8080, "http://localhost:9999");
 		proxy.start();
 		
-		RequestBody body = RequestBody.create(JSON, "");
+		String requestText = "And zis is ze requezt...";
+		RequestBody body = RequestBody.create(JSON, requestText);
 		Request request = new Request.Builder().url("http://localhost:8080").post(body).build();
 		Response response = client.newCall(request).execute();
 		
 		// Verify:
-		assertEquals(staticResponse, response.body().string());
+		assertEquals(requestText, endServer.getLastRequestText());
+		assertEquals(responseText, response.body().string());
 	}
 }

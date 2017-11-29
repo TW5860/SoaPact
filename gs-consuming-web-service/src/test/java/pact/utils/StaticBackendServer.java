@@ -16,12 +16,13 @@ public class StaticBackendServer {
 	
 	private String hostname;
 	private int port;
-	private String response;
+	private String responseText;
+	private String lastRequestText;
 
 	public StaticBackendServer(String hostname, int port, String response) {
 		this.hostname = hostname;
 		this.port = port;
-		this.response = response;
+		this.responseText = response;
 	}
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -32,9 +33,13 @@ public class StaticBackendServer {
 					InputStream inputStream = exchange.getInputStream();
 					String bodyText = new BufferedReader(new InputStreamReader(inputStream)).lines()
 							.collect(Collectors.joining("\n"));
-					logger.warn("Received Request Backserver: " + bodyText);
-					exchange.getResponseSender().send(response);
+					lastRequestText = bodyText;
+					exchange.getResponseSender().send(responseText);
 				})).build();
 		backServer.start();
+	}
+	
+	public String getLastRequestText() {
+		return lastRequestText;
 	}
 }
