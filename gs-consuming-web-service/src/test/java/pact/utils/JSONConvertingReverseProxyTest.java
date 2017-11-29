@@ -17,24 +17,25 @@ public class JSONConvertingReverseProxyTest {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 	@Test
-	public void should() throws IOException {
+	public void shouldConvertBetweenXMLandJSON() throws IOException {
 		// Prepare:
 		String responseText = "{x: {y: 1}}";
 		OkHttpClient client = new OkHttpClient();
 
 		// Act:
 		StaticBackendServer.runTest(responseText, endServer -> {
-			ReverseProxy proxy = new JSONConvertingReverseProxy("localhost", 8080, endServer.getUrl());
-			proxy.start();
-			
-			String requestText = "<a><b>xxx</b><c>yyy</c></a>";
-			RequestBody body = RequestBody.create(JSON, requestText);
-			Request request = new Request.Builder().url("http://localhost:8080").post(body).build();
-			Response response = client.newCall(request).execute();
-			
-			// Verify:
-			JSONAssert.assertEquals("{a: {b: \"xxx\", c: \"yyy\"}}", endServer.getLastRequestText(), true);
-			assertThat(response.body().string(), XMLCompare.isEquivalentXMLTo("<x><y>1</y></x>"));
+			JSONConvertingReverseProxy.runTest(endServer.getUrl(), proxy -> {			
+				String requestText = "<a><b>xxx</b><c>yyy</c></a>";
+				RequestBody body = RequestBody.create(JSON, requestText);
+				Request request = new Request.Builder().url(proxy.getUrl()).post(body).build();
+				Response response = client.newCall(request).execute();
+				
+				// Verify:
+				JSONAssert.assertEquals("{a: {b: \"xxx\", c: \"yyy\"}}",
+						endServer.getLastRequestText(), true);
+				assertThat(response.body().string(),
+						XMLCompare.isEquivalentXMLTo("<x><y>1</y></x>"));
+			});
 		});
 	}
 }

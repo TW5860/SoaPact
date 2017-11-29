@@ -2,10 +2,12 @@ package pact.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 
 import org.apache.cxf.helpers.IOUtils;
 
 import io.undertow.Undertow;
+import io.undertow.Undertow.ListenerInfo;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
 import okhttp3.MediaType;
@@ -17,17 +19,12 @@ import okhttp3.Response;
 public class ReverseProxy {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-	private int listenerPort;
-	private String hostName;
-	private String backServerURL;
+	private Undertow server;
+	private InetSocketAddress serverAddress;
 
-	@SuppressWarnings("unused")
-	private ReverseProxy() {};
-	
-	public ReverseProxy(String hostName, int port, String backServerURL) {
-		this.hostName = hostName;
-		listenerPort = port;
-		this.backServerURL = backServerURL;
+	public ReverseProxy(String backServerURL) {
+		server = Undertow.builder().addHttpListener(0, "localhost").setIoThreads(1)
+				.setHandler(reverseProxyHandler(backServerURL)).build();
 	}
 
 	private BlockingHandler reverseProxyHandler(String backServerURL) {
@@ -63,9 +60,39 @@ public class ReverseProxy {
 		return client.newCall(request).execute();
 	}
 
-	public void start() {
-		Undertow server = Undertow.builder().addHttpListener(listenerPort, hostName).setIoThreads(1)
-				.setHandler(reverseProxyHandler(backServerURL)).build();
+	private void start() {
 		server.start();
+		
+		ListenerInfo listenerInfo = server.getListenerInfo().get(0);
+		serverAddress = (InetSocketAddress) listenerInfo.getAddress();
+	}
+	
+	private void stop() {
+		server.stop();
+	}
+	
+	public String getUrl() {
+		return "http://" + serverAddress.getHostName() + ":" + serverAddress.getPort() + "/";
+	}
+
+
+	public static interface TestCase {
+		void run(ReverseProxy proxy) throws Exception;
+	}
+
+	protected void runTest(TestCase testCase) {
+		start();
+		try {
+			testCase.run(this);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			stop();
+		}
+	}
+	
+	public static void runTest(String backServerURL, TestCase testCase) {
+		ReverseProxy proxy = new ReverseProxy(backServerURL);
+		proxy.runTest(testCase);
 	}
 }

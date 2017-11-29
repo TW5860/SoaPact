@@ -6,10 +6,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 
+import pact.utils.ReverseProxy.TestCase;
+
 public class JSONConvertingReverseProxy extends ReverseProxy {
 	
-	public JSONConvertingReverseProxy(String hostName, int port, String backServerURL) {
-		super(hostName, port, backServerURL);
+	public JSONConvertingReverseProxy(String backServerURL) {
+		super(backServerURL);
 	}
 	
 	@Override
@@ -38,4 +40,9 @@ public class JSONConvertingReverseProxy extends ReverseProxy {
 
 		return writer.toString();
 	}
-}
+
+	
+	public static void runTest(String backServerURL, TestCase testCase) {
+		ReverseProxy proxy = new JSONConvertingReverseProxy(backServerURL);
+		proxy.runTest(testCase);
+	}}

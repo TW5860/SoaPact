@@ -23,17 +23,17 @@ public class ReverseProxyTest {
 
 		// Act:
 		StaticBackendServer.runTest(responseText, endServer -> {
-			ReverseProxy proxy = new ReverseProxy("localhost", 8080, endServer.getUrl());
-			proxy.start();
-			
-			String requestText = "And zis is ze requezt...";
-			RequestBody body = RequestBody.create(JSON, requestText);
-			Request request = new Request.Builder().url("http://localhost:8080").post(body).build();
-			Response response = client.newCall(request).execute();
-			
-			// Verify:
-			assertEquals(requestText, endServer.getLastRequestText());
-			assertEquals(responseText, response.body().string());
+			ReverseProxy.runTest(endServer.getUrl(), proxy -> {
+				String requestText = "And zis is ze requezt...";
+				RequestBody body = RequestBody.create(JSON, requestText);
+				Request request = new Request.Builder().url(proxy.getUrl())
+						.post(body).build();
+				Response response = client.newCall(request).execute();
+				
+				// Verify:
+				assertEquals(requestText, endServer.getLastRequestText());
+				assertEquals(responseText, response.body().string());
+			});
 		});
 	}
 }
