@@ -13,22 +13,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.xmlunit.diff.DefaultNodeMatcher;
-import org.xmlunit.diff.ElementSelectors;
-import org.xmlunit.matchers.CompareMatcher;
 
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 
 public class JSONConverterTest {
-	public static CompareMatcher isEquivalentXMLTo(String actualXml) {
-	     return CompareMatcher.isSimilarTo(actualXml)
-	    		 .throwComparisonFailure()
-	    		 .normalizeWhitespace()
-	    		 .ignoreComments()
-	    		 .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText));
-	}
-	
-
 	private String xmlToJSON(String xml) throws Exception {
 		Reader reader = new StringReader(xml);
 		StringWriter writer = new StringWriter();
@@ -120,6 +108,6 @@ public class JSONConverterTest {
 	public void jsonToXML_convertsSimpleJSONObjectToXML()
 			throws JSONException, XMLStreamException {
 		assertThat(jsonToXML("{a: {b: \"xxx\", c: \"yyy\"}}"),
-				isEquivalentXMLTo("<a><c>yyy</c><b>xxx</b></a>"));
+				XMLCompare.isEquivalentXMLTo("<a><c>yyy</c><b>xxx</b></a>"));
 	}
 }
