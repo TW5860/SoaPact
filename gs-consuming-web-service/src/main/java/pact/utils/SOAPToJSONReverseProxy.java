@@ -8,9 +8,9 @@ import java.io.StringWriter;
 
 import pact.utils.ReverseProxy.TestCase;
 
-public class JSONConvertingReverseProxy extends ReverseProxy {
+public class SOAPToJSONReverseProxy extends ReverseProxy {
 	
-	public JSONConvertingReverseProxy(String backServerURL) {
+	public SOAPToJSONReverseProxy(String backServerURL) {
 		super(backServerURL);
 	}
 	
@@ -43,6 +43,7 @@ public class JSONConvertingReverseProxy extends ReverseProxy {
 
 	
 	public static void runTest(String backServerURL, TestCase testCase) {
-		ReverseProxy proxy = new JSONConvertingReverseProxy(backServerURL);
+		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL);
 		proxy.runTest(testCase);
-	}}
+	}
+}

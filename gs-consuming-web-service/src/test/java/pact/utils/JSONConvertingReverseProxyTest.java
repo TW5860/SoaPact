@@ -24,7 +24,7 @@ public class JSONConvertingReverseProxyTest {
 
 		// Act:
 		StaticBackendServer.runTest(responseText, endServer -> {
-			JSONConvertingReverseProxy.runTest(endServer.getUrl(), proxy -> {			
+			SOAPToJSONReverseProxy.runTest(endServer.getUrl(), proxy -> {			
 				String requestText = "<a><b>xxx</b><c>yyy</c></a>";
 				RequestBody body = RequestBody.create(JSON, requestText);
 				Request request = new Request.Builder().url(proxy.getUrl()).post(body).build();
