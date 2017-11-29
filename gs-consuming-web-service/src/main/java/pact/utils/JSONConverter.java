@@ -2,6 +2,8 @@ package pact.utils;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.xml.bind.JAXBContext;
@@ -48,6 +50,15 @@ public class JSONConverter {
 		xmlToJSON(reader, writer, defaultJSONConfig);
 	}
 
+	public static String xmlToJSON(String xml) throws Exception {
+		Reader reader = new StringReader(xml);
+		StringWriter writer = new StringWriter();
+	
+		xmlToJSON(reader, writer);
+	
+		return writer.toString();
+	}
+
 	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig)
 			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, IOException {
@@ -57,6 +68,15 @@ public class JSONConverter {
 		xmlReaderToWriter(xmlReader, xmlWriter);
 
 		xmlWriter.close();
+	}
+
+	public static String xmlToJSON(String xml, Configuration jsonConfig) throws Exception {
+		Reader reader = new StringReader(xml);
+		StringWriter writer = new StringWriter();
+	
+		xmlToJSON(reader, writer, jsonConfig);
+	
+		return writer.toString();
 	}
 
 	private static void xmlReaderToWriter(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter)
@@ -85,6 +105,12 @@ public class JSONConverter {
 		jsonToXML(jsonText, writer, defaultJSONConfig);
 	}
 	
+	public static String jsonToXML(String json) throws JSONException, XMLStreamException {
+		StringWriter writer = new StringWriter();
+		jsonToXML(json, writer);
+		return writer.toString();
+	}
+
 	public static void jsonToXML(String jsonText, Writer writer, Configuration jsonConfig)
 			throws JSONException, XMLStreamException {
 		// Jettison includes its own version of the JSONObject class :-(
@@ -98,6 +124,12 @@ public class JSONConverter {
 		xmlReaderToWriter(xmlReader, xmlWriter);
 		
 		xmlWriter.close();
+	}
+
+	public static String jsonToXML(String json, Configuration jsonConfig) throws JSONException, XMLStreamException {
+		StringWriter writer = new StringWriter();
+		jsonToXML(json, writer, jsonConfig);
+		return writer.toString();
 	}
 
 	private static XMLStreamWriter makeJSONXMLStreamWriter(Writer writer, Configuration jsonConfig) {
@@ -132,5 +164,12 @@ public class JSONConverter {
 			xmlWriter.writeCData(xmlReader.getText());
 			break;
 		}
+	}
+
+	public static <S, T extends S> String objToJSON(T obj, Class<S> cls,
+			Configuration jsonConfig) throws Exception {
+		StringWriter writer = new StringWriter();
+		objToJSON(obj, cls, writer, jsonConfig);
+		return writer.toString();
 	}
 }
