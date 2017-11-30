@@ -1,4 +1,4 @@
-package hello;
+package server;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
