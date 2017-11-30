@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,6 +31,7 @@ import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 public class JSONConverter {
 	private static Configuration defaultJSONConfig;
+	private static Map<String, String> emptyXMLToJsonNamespaces = new HashMap<String, String>();
 
 	public static Configuration makeDefaultJSONConfig() {
 		Configuration jsonConfig = new Configuration();
@@ -65,7 +68,7 @@ public class JSONConverter {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 
-		xmlReaderToWriter(xmlReader, xmlWriter);
+		xmlReaderToWriter(xmlReader, xmlWriter, emptyXMLToJsonNamespaces);
 
 		xmlWriter.close();
 	}
@@ -79,13 +82,14 @@ public class JSONConverter {
 		return writer.toString();
 	}
 
-	private static void xmlReaderToWriter(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter)
+	private static void xmlReaderToWriter(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter, Map<String, String> xmlToJsonNamespaces)
 			throws XMLStreamException {
+		boolean firstElem = true;
 		while (xmlReader.hasNext()) {
-            copyEvent(xmlReader, xmlWriter);
+            firstElem = copyEvent(xmlReader, xmlWriter, firstElem, xmlToJsonNamespaces);
             xmlReader.next();
         }
-        copyEvent(xmlReader, xmlWriter);
+        copyEvent(xmlReader, xmlWriter, firstElem, xmlToJsonNamespaces);
 	}
 	
 	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer) throws JAXBException {
@@ -121,7 +125,7 @@ public class JSONConverter {
 		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
 		XMLStreamWriter xmlWriter = outputFactory.createXMLStreamWriter(writer);
 		
-		xmlReaderToWriter(xmlReader, xmlWriter);
+		xmlReaderToWriter(xmlReader, xmlWriter, jsonConfig.getXmlToJsonNamespaces());
 		
 		xmlWriter.close();
 	}
@@ -138,7 +142,8 @@ public class JSONConverter {
 		return xmlWriter;
 	}
 	
-	private static void copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter) throws XMLStreamException {
+	private static boolean copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter,
+			boolean firstElem, Map<String, String> xmlToJsonNamespaces) throws XMLStreamException {
 		switch (xmlReader.getEventType()) {
 		case XMLEvent.START_DOCUMENT:
 			xmlWriter.writeStartDocument("1.0");
@@ -147,10 +152,25 @@ public class JSONConverter {
 			xmlWriter.writeEndDocument();
 			break;
 		case XMLEvent.START_ELEMENT:
-			xmlWriter.writeStartElement(
-					xmlReader.getPrefix(),
-					xmlReader.getLocalName(),
-					xmlReader.getNamespaceURI());
+			String prefix = xmlReader.getPrefix();
+			String localName = xmlReader.getLocalName();
+			String namespaceURI = xmlReader.getNamespaceURI();
+
+			if (namespaceURI != null && !namespaceURI.equals("")) {
+				if (prefix == null || prefix.equals("")) {
+					prefix = xmlToJsonNamespaces.get(namespaceURI);
+					assert prefix != null;
+				}
+				xmlWriter.writeStartElement(prefix, localName, namespaceURI);
+			} else {
+				xmlWriter.writeStartElement(localName);
+			}
+			if (firstElem) {
+				for (Map.Entry<String, String> entry: xmlToJsonNamespaces.entrySet()) {					
+					xmlWriter.writeNamespace(entry.getValue(), entry.getKey());
+				}
+				firstElem = false;
+			}
 			break;
 		case XMLEvent.END_ELEMENT:
 			xmlWriter.writeEndElement();
@@ -164,6 +184,8 @@ public class JSONConverter {
 			xmlWriter.writeCData(xmlReader.getText());
 			break;
 		}
+		
+		return firstElem;
 	}
 
 	public static <S, T extends S> String objToJSON(T obj, Class<S> cls,

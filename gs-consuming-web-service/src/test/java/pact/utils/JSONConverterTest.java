@@ -69,4 +69,16 @@ public class JSONConverterTest {
 		assertThat(JSONConverter.jsonToXML("{a: {b: \"xxx\", c: \"yyy\"}}"),
 				XMLCompare.isEquivalentXMLTo("<a><c>yyy</c><b>xxx</b></a>"));
 	}
+
+	@Test
+	public void jsonToXML_convertsSimpleJSONObjectToXMLWithNamespaces()
+			throws JSONException, XMLStreamException {
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
+
+		String actualXML = JSONConverter.jsonToXML("{a: {\"gd#b\": \"xxx\", c: \"yyy\"}}", jsonConfig);
+		String expectedXML = "<a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\"><c>yyy</c><gd:b>xxx</gd:b></a>";
+		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
+	}
 }
