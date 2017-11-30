@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-core</artifactId>
-			<version>${undertow.version}</version>
+			<version>${undertow.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20160212</version>
+			<version>20160212</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-consumer-junit_2.11 -->
