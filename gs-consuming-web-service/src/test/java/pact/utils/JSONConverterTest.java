@@ -80,5 +80,10 @@ public class JSONConverterTest {
 		String actualXML = JSONConverter.jsonToXML("{a: {\"gd#b\": \"xxx\", c: \"yyy\"}}", jsonConfig);
 		String expectedXML = "<a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\"><c>yyy</c><gd:b>xxx</gd:b></a>";
 		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
+
+		namespaces.put("http://kkqq.com", "kkqq");
+		actualXML = JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig);
+		expectedXML = "<gd:a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\" xmlns:kkqq=\"http://kkqq.com\"><kkqq:c>yyy</kkqq:c><kkqq:b>xxx</kkqq:b></gd:a>";
+		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
 	}
 }
