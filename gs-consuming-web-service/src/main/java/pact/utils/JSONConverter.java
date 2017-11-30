@@ -159,11 +159,9 @@ public class JSONConverter {
 			String namespaceURI = xmlReader.getNamespaceURI();
 
 			if (namespaceURI != null && !namespaceURI.equals("")) {
-				if (prefix == null || prefix.equals("")) {
-					prefix = xmlToJsonNamespaces.get(namespaceURI);
-					if (prefix == null) {
-						throw new JSONException("No namespace prefix found in JSON configuration for URI " + namespaceURI);
-					}
+				String configPrefix = xmlToJsonNamespaces.get(namespaceURI);
+				if (configPrefix != null) {
+					prefix = configPrefix;
 				}
 				xmlWriter.writeStartElement(prefix, localName, namespaceURI);
 			} else {

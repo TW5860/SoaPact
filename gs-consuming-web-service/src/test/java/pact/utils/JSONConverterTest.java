@@ -39,6 +39,26 @@ public class JSONConverterTest {
 	}
 	
 	@Test
+	public void xmlToJSON_convertsXMLWithDefaultNamespaceToJSON() throws Exception {
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://ze/ns1", "NN1");
+
+		JSONAssert.assertEquals("{\"NN1#a\": {\"NN1#b\": \"xxx\", \"NN1#c\": \"yyy\"}}",
+				JSONConverter.xmlToJSON("<a xmlns=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></a>", jsonConfig), true);
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void xmlToJSON_failsForXMLWithUnconfiguredDefaultNamespace() throws Exception {
+		try {
+			JSONConverter.xmlToJSON("<a xmlns=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></a>");
+		} catch (IllegalStateException e) {
+			assertThat(e.getMessage(), containsString("http://ze/ns1"));
+			throw e;
+		}
+	}
+
+	@Test
 	public void xmlToObj_convertsSimpleObjectToJSON() throws Exception {
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
