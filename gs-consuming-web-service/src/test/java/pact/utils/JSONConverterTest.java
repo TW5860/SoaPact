@@ -1,6 +1,7 @@
 package pact.utils;
 
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 import java.util.Map;
 
@@ -85,5 +86,19 @@ public class JSONConverterTest {
 		actualXML = JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig);
 		expectedXML = "<gd:a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\" xmlns:kkqq=\"http://kkqq.com\"><kkqq:c>yyy</kkqq:c><kkqq:b>xxx</kkqq:b></gd:a>";
 		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
+	}
+
+	@Test(expected = JSONException.class)
+	public void jsonToXML_failsForUndeclaredNamespace() throws JSONException, XMLStreamException {
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
+
+		try {
+			System.out.println(JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig));
+		} catch (JSONException e) {
+			assertThat(e.getMessage(), containsString("kkqq#"));
+			throw e;
+		}
 	}
 }

@@ -30,12 +30,14 @@ import org.codehaus.jettison.mapped.MappedXMLStreamReader;
 import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 public class JSONConverter {
+	private static final String JSON_NAMESPACE_SEPARATOR = "#";
+
 	private static Configuration defaultJSONConfig;
 	private static Map<String, String> emptyXMLToJsonNamespaces = new HashMap<String, String>();
 
 	public static Configuration makeDefaultJSONConfig() {
 		Configuration jsonConfig = new Configuration();
-		jsonConfig.setJsonNamespaceSeparator("#");
+		jsonConfig.setJsonNamespaceSeparator(JSON_NAMESPACE_SEPARATOR);
 		
 		DefaultConverter jsonConverter = new DefaultConverter();
 		jsonConverter.setEnforce32BitInt(true);
@@ -49,7 +51,7 @@ public class JSONConverter {
 	}
 
 	public static void xmlToJSON(Reader reader, Writer writer) throws FactoryConfigurationError, XMLStreamException,
-			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException, JSONException {
 		xmlToJSON(reader, writer, defaultJSONConfig);
 	}
 
@@ -64,7 +66,7 @@ public class JSONConverter {
 
 	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig)
 			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
-			TransformerConfigurationException, TransformerException, IOException {
+			TransformerConfigurationException, TransformerException, IOException, JSONException {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 
@@ -83,7 +85,7 @@ public class JSONConverter {
 	}
 
 	private static void xmlReaderToWriter(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter, Map<String, String> xmlToJsonNamespaces)
-			throws XMLStreamException {
+			throws XMLStreamException, JSONException {
 		boolean firstElem = true;
 		while (xmlReader.hasNext()) {
             firstElem = copyEvent(xmlReader, xmlWriter, firstElem, xmlToJsonNamespaces);
@@ -143,7 +145,7 @@ public class JSONConverter {
 	}
 	
 	private static boolean copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter,
-			boolean firstElem, Map<String, String> xmlToJsonNamespaces) throws XMLStreamException {
+			boolean firstElem, Map<String, String> xmlToJsonNamespaces) throws XMLStreamException, JSONException {
 		switch (xmlReader.getEventType()) {
 		case XMLEvent.START_DOCUMENT:
 			xmlWriter.writeStartDocument("1.0");
@@ -159,10 +161,15 @@ public class JSONConverter {
 			if (namespaceURI != null && !namespaceURI.equals("")) {
 				if (prefix == null || prefix.equals("")) {
 					prefix = xmlToJsonNamespaces.get(namespaceURI);
-					assert prefix != null;
+					if (prefix == null) {
+						throw new JSONException("No namespace prefix found in JSON configuration for URI " + namespaceURI);
+					}
 				}
 				xmlWriter.writeStartElement(prefix, localName, namespaceURI);
 			} else {
+				if (localName.contains(JSON_NAMESPACE_SEPARATOR)) {
+					throw new JSONException("Namespace prefix not found for element '" + localName + "'");
+				}
 				xmlWriter.writeStartElement(localName);
 			}
 			if (firstElem) {
