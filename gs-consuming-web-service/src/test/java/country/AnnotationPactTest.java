@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
+
 import au.com.dius.pact.consumer.ConsumerPactTestMk2;
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.DslPart;
@@ -13,6 +15,7 @@ import au.com.dius.pact.model.RequestResponsePact;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
+import pact.utils.PactDslSoapBody;
 import pact.utils.proxy.ReverseProxy;
 import pact.utils.proxy.SOAPToJSON2WayReverseProxy;
 
@@ -30,10 +33,20 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
 	@Override
 	protected RequestResponsePact createPact(PactDslWithProvider builder) {
-		DslPart requestForAnExistingCountry = new PactDslJsonBody()
-				.object("gc#getCountryRequest")
+		DslPart requestForAnExistingCountry;
+		try {
+			GetCountryRequest request = new GetCountryRequest();
+			request.setName("Spain");
+			
+			requestForAnExistingCountry = new PactDslSoapBody()
+					.withNs("http://spring.io/guides/gs-producing-web-service")
+					.fromObject(request, GetCountryRequest.class);
+		} catch (JAXBException e) {
+			requestForAnExistingCountry = new PactDslJsonBody()
+					.object("gc#getCountryRequest")
 					.stringValue("gc#name", "Spain")
-				.closeObject();
+					.closeObject();
+		}
 		
 		DslPart responseForAnExistingCountry = new PactDslJsonBody()
 				.object("gc#getCountryResponse")
@@ -42,6 +55,9 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 						.integerType("gc#population")
 					.closeObject()
 				.closeObject();
+		
+		
+		
 
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
 				.uponReceiving("A request for an existing country").path("/").method("POST")
