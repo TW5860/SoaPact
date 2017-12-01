@@ -2,7 +2,6 @@ package country;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.charset.Charset;
 import java.util.Map;
 
 import org.apache.http.entity.ContentType;
