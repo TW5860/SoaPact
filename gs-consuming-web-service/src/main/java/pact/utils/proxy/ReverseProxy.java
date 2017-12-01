@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;

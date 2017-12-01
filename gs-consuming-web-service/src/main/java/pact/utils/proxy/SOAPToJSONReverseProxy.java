@@ -1,10 +1,12 @@
-package pact.utils;
+package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.codehaus.jettison.mapped.Configuration;
+
+import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONReverseProxy extends ReverseProxy {
 	

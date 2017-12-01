@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.converter;
 
 import java.io.IOException;
 import java.io.Reader;

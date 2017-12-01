@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.proxy;
 
 import static org.junit.Assert.assertThat;
 
@@ -14,6 +14,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import pact.utils.FileReader;
+import pact.utils.StaticBackendServer;
+import pact.utils.XMLCompare;
+import pact.utils.converter.SOAPToJSONConverter;
+import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class SOAPToJSONReverseProxyTest {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

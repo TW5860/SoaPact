@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.converter;
 
 import static org.junit.Assert.assertThat;
 
@@ -7,6 +7,10 @@ import java.util.Map;
 import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+
+import pact.utils.FileReader;
+import pact.utils.XMLCompare;
+import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONConverterTest {
 	private Configuration makeTestConfiguration() {
