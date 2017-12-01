@@ -1,0 +1,73 @@
+{
+    "provider": {
+        "name": "Country-Data-Provider"
+    },
+    "consumer": {
+        "name": "Country-Consumer"
+    },
+    "interactions": [
+        {
+            "description": "A request for an existing country",
+            "request": {
+                "method": "POST",
+                "path": "/",
+                "headers": {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
+                "body": {
+                    "getCountryRequest": {
+                        "name": "Spain"
+                    }
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
+                "body": {
+                    "getCountryResponse": {
+                        "country": {
+                            "name": "Spain",
+                            "population": 100
+                        }
+                    }
+                },
+                "matchingRules": {
+                    "body": {
+                        "$.getCountryResponse.country.population": {
+                            "matchers": [
+                                {
+                                    "match": "integer"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
+                },
+                "generators": {
+                    "body": {
+                        "$.getCountryResponse.country.population": {
+                            "type": "RandomInt",
+                            "min": 0,
+                            "max": 2147483647
+                        }
+                    }
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "provider is available"
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "pact-specification": {
+            "version": "3.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.5.7"
+        }
+    }
+}
