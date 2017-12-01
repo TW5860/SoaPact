@@ -12,7 +12,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import pact.utils.StaticBackendServer;
-import pact.utils.proxy.ReverseProxy;
 
 public class ReverseProxyTest {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

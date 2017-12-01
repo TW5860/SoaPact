@@ -12,3 +12,9 @@
 		</ns2:getCountryResponse>
 	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
+
+Unmarshalling Error: unexpected element 
+(uri:"http://spring.io/guides/gs-producing-web-service", local:"name"). 
+Expected elements are 
+<{http://spring.io/guides/gs-producing-web-service}country> 
+	

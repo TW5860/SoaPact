@@ -1,7 +1,6 @@
 package pact.utils;
 
 import java.io.StringWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -14,9 +13,12 @@ import pact.utils.converter.JSONConverter;
 
 public class PactDslSoapBody extends PactDslJsonBody {
 	private Map<String, String> namespaces;
+	private Configuration jsonConfig;
 	
+	@SuppressWarnings("unchecked")
 	public PactDslSoapBody() {
-		namespaces = new HashMap<String, String>();
+		jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		namespaces = jsonConfig.getXmlToJsonNamespaces();
 	}
 
 	public PactDslSoapBody withNs(String uri) {
@@ -25,10 +27,6 @@ public class PactDslSoapBody extends PactDslJsonBody {
 	}
 
 	public <S, T extends S> PactDslSoapBody fromObject(T obj, Class<S> cls) throws JAXBException {
-		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
-		Map<String, String> configNamespaces = jsonConfig.getXmlToJsonNamespaces();
-		configNamespaces.putAll(namespaces);
-		
 		StringWriter writer = new StringWriter();
 		JSONConverter.objToJSON(obj, cls, writer, jsonConfig);
 		JSONObject jsonObj = new JSONObject(writer.toString());

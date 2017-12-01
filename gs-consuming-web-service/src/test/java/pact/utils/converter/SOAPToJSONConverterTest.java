@@ -10,7 +10,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import pact.utils.FileReader;
 import pact.utils.XMLCompare;
-import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONConverterTest {
 	private Configuration makeTestConfiguration() {

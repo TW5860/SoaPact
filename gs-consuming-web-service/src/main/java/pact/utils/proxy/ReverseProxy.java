@@ -17,7 +17,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ReverseProxy {
-	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+	public static final MediaType JSON = MediaType.parse("application/json; charset=UTF-8");
 
 	private Undertow server;
 	private InetSocketAddress serverAddress;
@@ -60,14 +60,14 @@ public class ReverseProxy {
 		return client.newCall(request).execute();
 	}
 
-	private void start() {
+	public void start() {
 		server.start();
 		
 		ListenerInfo listenerInfo = server.getListenerInfo().get(0);
 		serverAddress = (InetSocketAddress) listenerInfo.getAddress();
 	}
 	
-	private void stop() {
+	public void stop() {
 		server.stop();
 	}
 	
