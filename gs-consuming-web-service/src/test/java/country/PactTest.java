@@ -19,6 +19,7 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.FileReader;
+import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class PactTest {
 

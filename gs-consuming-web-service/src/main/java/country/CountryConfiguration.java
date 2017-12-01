@@ -29,16 +29,16 @@ public class CountryConfiguration {
 		jaxWsProxyFactoryBean.setAddress(endPoint);
 
 		// create the loggingInInterceptor and loggingOutInterceptor
-		LoggingInInterceptor loggingInInterceptor = new LoggingInInterceptor();
-		loggingInInterceptor.setPrettyLogging(true);
-		LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor();
-		loggingOutInterceptor.setPrettyLogging(true);
+//		LoggingInInterceptor loggingInInterceptor = new LoggingInInterceptor();
+//		loggingInInterceptor.setPrettyLogging(true);
+//		LoggingOutInterceptor loggingOutInterceptor = new LoggingOutInterceptor();
+//		loggingOutInterceptor.setPrettyLogging(true);
 
 		// add loggingInterceptor to print the received/sent messages
-		jaxWsProxyFactoryBean.getInInterceptors().add(loggingInInterceptor);
-		jaxWsProxyFactoryBean.getInFaultInterceptors().add(loggingInInterceptor);
-		jaxWsProxyFactoryBean.getOutInterceptors().add(loggingOutInterceptor);
-		jaxWsProxyFactoryBean.getOutFaultInterceptors().add(loggingOutInterceptor);
+//		jaxWsProxyFactoryBean.getInInterceptors().add(loggingInInterceptor);
+//		jaxWsProxyFactoryBean.getInFaultInterceptors().add(loggingInInterceptor);
+//		jaxWsProxyFactoryBean.getOutInterceptors().add(loggingOutInterceptor);
+//		jaxWsProxyFactoryBean.getOutFaultInterceptors().add(loggingOutInterceptor);
 		return (CountriesPort) jaxWsProxyFactoryBean.create();
 	}
 }

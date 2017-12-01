@@ -10,6 +10,7 @@ import org.codehaus.jettison.mapped.Configuration;
 import org.json.JSONObject;
 
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
+import pact.utils.converter.JSONConverter;
 
 public class PactDslSoapBody extends PactDslJsonBody {
 	private Map<String, String> namespaces;

@@ -16,11 +16,11 @@ import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 public class Application {
 
 	public static void main(String[] args) {
-		System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
-		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
-		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
-		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
-		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
+//		System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Slf4jLogger");
+//		System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+//		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+//		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+//		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");
 		SpringApplication.run(Application.class);
 	}
 
@@ -34,7 +34,6 @@ public class Application {
 			}
 			
 			Logger logger = LoggerFactory.getLogger(Application.class);
-		  
 			GetCountryRequest request = new GetCountryRequest();
 			request.setName(country);
 			GetCountryResponse response = countriesPort.getCountry(request);

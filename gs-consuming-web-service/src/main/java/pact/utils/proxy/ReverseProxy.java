@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,14 +60,14 @@ public class ReverseProxy {
 		return client.newCall(request).execute();
 	}
 
-	private void start() {
+	public void start() {
 		server.start();
 		
 		ListenerInfo listenerInfo = server.getListenerInfo().get(0);
 		serverAddress = (InetSocketAddress) listenerInfo.getAddress();
 	}
 	
-	private void stop() {
+	public void stop() {
 		server.stop();
 	}
 	

@@ -1,4 +1,4 @@
-package pact.utils;
+package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 
-import pact.utils.ReverseProxy.TestCase;
+import pact.utils.converter.JSONConverter;
 
 public class SOAPToJSONReverseProxy extends ReverseProxy {
 	
@@ -30,15 +30,16 @@ public class SOAPToJSONReverseProxy extends ReverseProxy {
 
 	@Override
 	protected String changeResponse(String bodyText) {
-		StringWriter writer = new StringWriter();
-
-		try {
-			JSONConverter.jsonToXML(bodyText, writer);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		return writer.toString();
+		return bodyText;
+//		StringWriter writer = new StringWriter();
+//
+//		try {
+//			JSONConverter.jsonToXML(bodyText, writer);
+//		} catch (Exception e) {
+//			throw new RuntimeException(e);
+//		}
+//
+//		return writer.toString();
 	}
 
 	

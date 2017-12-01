@@ -1,11 +1,12 @@
 logging:
   level:
-    country: INFO
+    country: ERROR
     org:
       springframework:
-        ws: INFO
+        ws: TRACE
       apache:
-        cxf: INFO  
+        cxf: ERROR 
+        http: ERROR 
     io:
        spring:
-          guides: INFO
+          guides: ERROR
