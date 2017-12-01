@@ -17,7 +17,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ReverseProxy {
-	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+	public static final MediaType JSON = MediaType.parse("application/json; charset=UTF-8");
 
 	private Undertow server;
 	private InetSocketAddress serverAddress;

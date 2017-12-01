@@ -30,16 +30,15 @@ public class SOAPToJSONReverseProxy extends ReverseProxy {
 
 	@Override
 	protected String changeResponse(String bodyText) {
-		return bodyText;
-//		StringWriter writer = new StringWriter();
-//
-//		try {
-//			JSONConverter.jsonToXML(bodyText, writer);
-//		} catch (Exception e) {
-//			throw new RuntimeException(e);
-//		}
-//
-//		return writer.toString();
+		StringWriter writer = new StringWriter();
+
+		try {
+			JSONConverter.jsonToXML(bodyText, writer);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		return writer.toString();
 	}
 
 	

@@ -2,7 +2,6 @@ package country;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.http.entity.ContentType;
@@ -10,8 +9,6 @@ import org.junit.Test;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.consumer.ConsumerPactRunnerKt;
-import au.com.dius.pact.consumer.MockServer;
-import au.com.dius.pact.consumer.PactTestRun;
 import au.com.dius.pact.consumer.PactVerificationResult;
 import au.com.dius.pact.model.MockProviderConfig;
 import au.com.dius.pact.model.RequestResponsePact;
@@ -19,7 +16,6 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.FileReader;
-import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class PactTest {
 

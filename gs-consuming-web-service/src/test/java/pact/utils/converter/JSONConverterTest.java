@@ -1,7 +1,7 @@
 package pact.utils.converter;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
@@ -14,7 +14,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import pact.utils.XMLCompare;
-import pact.utils.converter.JSONConverter;
 
 public class JSONConverterTest {
 	@Test
