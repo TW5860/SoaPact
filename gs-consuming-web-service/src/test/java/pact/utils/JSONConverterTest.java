@@ -1,6 +1,7 @@
 package pact.utils;
 
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 import java.util.Map;
 
@@ -37,6 +38,26 @@ public class JSONConverterTest {
 								 jsonConfig), true);
 	}
 	
+	@Test
+	public void xmlToJSON_convertsXMLWithDefaultNamespaceToJSON() throws Exception {
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://ze/ns1", "NN1");
+
+		JSONAssert.assertEquals("{\"NN1#a\": {\"NN1#b\": \"xxx\", \"NN1#c\": \"yyy\"}}",
+				JSONConverter.xmlToJSON("<a xmlns=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></a>", jsonConfig), true);
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void xmlToJSON_failsForXMLWithUnconfiguredDefaultNamespace() throws Exception {
+		try {
+			JSONConverter.xmlToJSON("<a xmlns=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></a>");
+		} catch (IllegalStateException e) {
+			assertThat(e.getMessage(), containsString("http://ze/ns1"));
+			throw e;
+		}
+	}
+
 	@Test
 	public void xmlToObj_convertsSimpleObjectToJSON() throws Exception {
 		GetCountryRequest request = new GetCountryRequest();
@@ -80,5 +101,24 @@ public class JSONConverterTest {
 		String actualXML = JSONConverter.jsonToXML("{a: {\"gd#b\": \"xxx\", c: \"yyy\"}}", jsonConfig);
 		String expectedXML = "<a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\"><c>yyy</c><gd:b>xxx</gd:b></a>";
 		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
+
+		namespaces.put("http://kkqq.com", "kkqq");
+		actualXML = JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig);
+		expectedXML = "<gd:a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\" xmlns:kkqq=\"http://kkqq.com\"><kkqq:c>yyy</kkqq:c><kkqq:b>xxx</kkqq:b></gd:a>";
+		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
+	}
+
+	@Test(expected = JSONException.class)
+	public void jsonToXML_failsForUndeclaredNamespace() throws JSONException, XMLStreamException {
+		Configuration jsonConfig = JSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
+
+		try {
+			System.out.println(JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig));
+		} catch (JSONException e) {
+			assertThat(e.getMessage(), containsString("kkqq#"));
+			throw e;
+		}
 	}
 }
