@@ -2,9 +2,10 @@ package country;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.charset.Charset;
+import java.util.Map;
 
 import org.apache.http.entity.ContentType;
+import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
@@ -16,6 +17,8 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.FileReader;
+import pact.utils.converter.SOAPToJSONConverter;
+import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class PactTest {
 
@@ -23,15 +26,20 @@ public class PactTest {
 	public void testPact() {
 		RequestResponsePact pact = buildPact();
 		MockProviderConfig createDefault = MockProviderConfig.createDefault();
-		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, createDefault, 
-			mockServer -> {
-				CountriesPort countriesPort = CountryConfiguration.getCountriesPort(mockServer.getUrl());
+
+		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
+
+		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, createDefault, pactServer -> {
+			SOAPToJSONReverseProxy.runTest(pactServer.getUrl(), jsonConfig, pactSOAPServer -> {
+				CountriesPort countriesPort = CountryConfiguration.getCountriesPort(pactSOAPServer.getUrl());
 				GetCountryRequest request = new GetCountryRequest();
 				request.setName("Spain");
 				GetCountryResponse response = countriesPort.getCountry(request);
 				assertEquals(response.getCountry().getCapital(), "Madrid");
-			}
-		);
+			});
+		});
 		
 		if (result instanceof PactVerificationResult.Error) {
 			throw new RuntimeException(((PactVerificationResult.Error) result).getError());
@@ -41,7 +49,7 @@ public class PactTest {
 	}
 
 	private static RequestResponsePact buildPact() {
-		String xmlResponse = FileReader.readFile("ValidSoapResponse.xml", Charset.defaultCharset());
+		String jsonResponse = FileReader.readFile("ValidSoapResponseInJSON.json");
 		
 		RequestResponsePact pact = ConsumerPactBuilder
 				.consumer("Countries consumer")
@@ -51,8 +59,8 @@ public class PactTest {
 				.method("POST")
 				.willRespondWith()
 				.status(200)
-				.body(xmlResponse,
-					  ContentType.TEXT_XML)
+				.body(jsonResponse,
+					  ContentType.APPLICATION_JSON)
 				.toPact();
 		return pact;
 	}

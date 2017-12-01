@@ -2,48 +2,48 @@ package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 
-import pact.utils.converter.JSONConverter;
+import org.apache.cxf.helpers.IOUtils;
+import org.codehaus.jettison.mapped.Configuration;
+
+import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONReverseProxy extends ReverseProxy {
 	
-	public SOAPToJSONReverseProxy(String backServerURL) {
+	private Configuration jsonConfig;
+
+
+	public SOAPToJSONReverseProxy(String backServerURL, Configuration jsonConfig) {
 		super(backServerURL);
+		
+		this.jsonConfig = jsonConfig;
 	}
 	
 	@Override
 	protected String changeRequest(InputStream bodyInputStream) throws IOException {
-		Reader reader = new InputStreamReader(bodyInputStream);
-		StringWriter writer = new StringWriter();
+		String bodyText = IOUtils.toString(bodyInputStream);
 
 		try {
-			JSONConverter.xmlToJSON(reader, writer);
+			return SOAPToJSONConverter.soapRequestToJSON(bodyText, jsonConfig);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-
-		return writer.toString();
 	}
 
 	@Override
 	protected String changeResponse(String bodyText) {
-		StringWriter writer = new StringWriter();
-
 		try {
-			JSONConverter.jsonToXML(bodyText, writer);
+			return SOAPToJSONConverter.jsonToSoapResponse(bodyText, jsonConfig);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-
-		return writer.toString();
 	}
 
 	
-	public static void runTest(String backServerURL, TestCase testCase) {
-		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL);
+	public static void runTest(String backServerURL, Configuration jsonConfig, TestCase testCase) {
+		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL, jsonConfig);
 		proxy.runTest(testCase);
 	}
 }
