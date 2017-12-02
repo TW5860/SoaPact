@@ -2,7 +2,6 @@ package pact.utils.proxy;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.apache.cxf.helpers.IOUtils;
 import org.codehaus.jettison.mapped.Configuration;
@@ -12,47 +11,42 @@ import pact.utils.converter.SOAPToJSONConverter;
 
 public class JSONToSOAP2WayReverseProxy extends ReverseProxy {
 
-	public JSONToSOAP2WayReverseProxy(String backServerURL) {
+	private Configuration jsonConfig;
+
+	public JSONToSOAP2WayReverseProxy(String backServerURL, Configuration jsonConfig) {
 		super(backServerURL);
+		this.jsonConfig = jsonConfig;
 	}
 
 	@Override
 	protected String changeRequest(InputStream bodyInputStream) throws IOException {
-		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
-		JSON = MediaType.parse("text/xml; charset=UTF-8");		
-		String soapRequestToJSON;
+		JSON = MediaType.parse("text/xml; charset=UTF-8");
+		String bodyText = IOUtils.toString(bodyInputStream, "UTF-8");
 		try {
-			String theString = IOUtils.toString(bodyInputStream, "UTF-8");
-			soapRequestToJSON = SOAPToJSONConverter.jsonToSoapResponse(theString, jsonConfig);
-			soapRequestToJSON = soapRequestToJSON.replace("<?xml version='1.0'?>", "");
+			return SOAPToJSONConverter.jsonToSoapResponse(bodyText, jsonConfig);
+			// soapRequestToJSON = soapRequestToJSON.replace("<?xml version='1.0'?>", "");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return soapRequestToJSON;
 	}
 
 	@Override
 	protected String changeResponse(String bodyText) {
 		JSON = MediaType.parse("application/json; charset=UTF-8");
 		try {
-			System.err.println("Response non converted:" + bodyText);
-			Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-			Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-			namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
-			String converted = SOAPToJSONConverter.soapRequestToJSON(bodyText, jsonConfig);
-			System.err.println("Response converted:" + converted);
-			return converted;
+			return SOAPToJSONConverter.soapRequestToJSON(bodyText, jsonConfig);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		return bodyText;
 	}
 
 	public static void runTest(String backServerURL, TestCase testCase) {
-		ReverseProxy proxy = new JSONToSOAP2WayReverseProxy(backServerURL);
+		ReverseProxy proxy = new JSONToSOAP2WayReverseProxy(backServerURL, SOAPToJSONConverter.makeDefaultJSONConfig());
+		proxy.runTest(testCase);
+	}
+
+	public static void runTest(String backServerURL, Configuration jsonConfig, TestCase testCase) {
+		ReverseProxy proxy = new JSONToSOAP2WayReverseProxy(backServerURL, jsonConfig);
 		proxy.runTest(testCase);
 	}
 }
