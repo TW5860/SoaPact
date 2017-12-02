@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 
 import io.spring.guides.gs_producing_web_service.CountriesPort;
 
-@SuppressWarnings("deprecation")
 @Configuration
 public class CountryConfiguration {
 	

@@ -16,7 +16,6 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.PactDslSoapBody;
-import pact.utils.proxy.ReverseProxy;
 import pact.utils.proxy.SOAPToJSON2WayReverseProxy;
 
 public class AnnotationPactTest extends ConsumerPactTestMk2 {
@@ -56,9 +55,6 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 					.closeObject()
 				.closeObject();
 		
-		
-		
-
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
 				.uponReceiving("A request for an existing country").path("/").method("POST")
 					.body(requestForAnExistingCountry)
@@ -70,19 +66,12 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
 	@Override
 	protected void runTest(MockServer mockServer) throws IOException {
-		ReverseProxy proxy = new SOAPToJSON2WayReverseProxy(mockServer.getUrl());
-		
-		proxy.start();
-		try {
-			CountriesPort countriesPort = CountryConfiguration.getCountriesPort(proxy.getUrl());
+		SOAPToJSON2WayReverseProxy.runTest(mockServer.getUrl(), p -> {
+			CountriesPort countriesPort = CountryConfiguration.getCountriesPort(p.getUrl());
 			GetCountryResponse country = countriesPort
 					.getCountry(getCounrtyRequestForAnExistingCountry());
 			assertEquals(country.getCountry().getName(), "Spain");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			proxy.stop();
-		}
+		});
 	}
 
 	private GetCountryRequest getCounrtyRequestForAnExistingCountry() {

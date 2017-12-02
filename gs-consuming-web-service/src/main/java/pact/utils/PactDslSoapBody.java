@@ -15,7 +15,6 @@ public class PactDslSoapBody extends PactDslJsonBody {
 	private Map<String, String> namespaces;
 	private Configuration jsonConfig;
 	
-	@SuppressWarnings("unchecked")
 	public PactDslSoapBody() {
 		jsonConfig = JSONConverter.makeDefaultJSONConfig();
 		namespaces = jsonConfig.getXmlToJsonNamespaces();

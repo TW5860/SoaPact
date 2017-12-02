@@ -127,7 +127,7 @@ public class JSONConverter {
 		XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
 		XMLStreamWriter xmlWriter = outputFactory.createXMLStreamWriter(writer);
 		
-		xmlReaderToWriter(xmlReader, xmlWriter, jsonConfig.getXmlToJsonNamespaces());
+		xmlReaderToWriter(xmlReader, xmlWriter, (Map<String,String>)jsonConfig.getXmlToJsonNamespaces());
 		
 		xmlWriter.close();
 	}

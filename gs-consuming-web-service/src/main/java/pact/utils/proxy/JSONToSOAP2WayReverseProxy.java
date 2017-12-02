@@ -8,10 +8,6 @@ import org.apache.cxf.helpers.IOUtils;
 import org.codehaus.jettison.mapped.Configuration;
 
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import pact.utils.converter.SOAPToJSONConverter;
 
 public class JSONToSOAP2WayReverseProxy extends ReverseProxy {
