@@ -25,10 +25,8 @@ public class JSONToSOAP2WayReverseProxy extends ReverseProxy {
 		String soapRequestToJSON;
 		try {
 			String theString = IOUtils.toString(bodyInputStream, "UTF-8");
-			System.err.println("Request not conv:" + theString);
 			soapRequestToJSON = SOAPToJSONConverter.jsonToSoapResponse(theString, jsonConfig);
 			soapRequestToJSON = soapRequestToJSON.replace("<?xml version='1.0'?>", "");
-			System.err.println("Request conv:" + soapRequestToJSON);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

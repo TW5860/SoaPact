@@ -3,8 +3,11 @@ package country;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
+
+import org.codehaus.jettison.mapped.Configuration;
 
 import au.com.dius.pact.consumer.ConsumerPactTestMk2;
 import au.com.dius.pact.consumer.MockServer;
@@ -16,7 +19,8 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.PactDslSoapBody;
-import pact.utils.proxy.SOAPToJSON2WayReverseProxy;
+import pact.utils.converter.SOAPToJSONConverter;
+import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
@@ -66,7 +70,11 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
 	@Override
 	protected void runTest(MockServer mockServer) throws IOException {
-		SOAPToJSON2WayReverseProxy.runTest(mockServer.getUrl(), p -> {
+		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
+		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
+		
+		SOAPToJSONReverseProxy.runTest(mockServer.getUrl(),jsonConfig , p -> {
 			CountriesPort countriesPort = CountryConfiguration.getCountriesPort(p.getUrl());
 			GetCountryResponse country = countriesPort
 					.getCountry(getCounrtyRequestForAnExistingCountry());
