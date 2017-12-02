@@ -22,7 +22,7 @@ public class SOAPToJSON2WayReverseProxy extends ReverseProxy {
 	protected String changeRequest(InputStream bodyInputStream) throws IOException {
 		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gc");
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
 
 		String soapRequestToJSON;
 		try {
@@ -39,7 +39,7 @@ public class SOAPToJSON2WayReverseProxy extends ReverseProxy {
 		try {
 			Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
 			Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-			namespaces.put("http://spring.io/guides/gs-producing-web-service", "gc");
+			namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
 			String converted = SOAPToJSONConverter.jsonToSoapResponse(bodyText,
 					jsonConfig);
 			System.out.println(converted);

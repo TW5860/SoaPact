@@ -43,16 +43,16 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 					.fromObject(request, GetCountryRequest.class);
 		} catch (JAXBException e) {
 			requestForAnExistingCountry = new PactDslJsonBody()
-					.object("gc#getCountryRequest")
-					.stringValue("gc#name", "Spain")
+					.object("getCountryRequest")
+					.stringValue("name", "Spain")
 					.closeObject();
 		}
 		
 		DslPart responseForAnExistingCountry = new PactDslJsonBody()
-				.object("gc#getCountryResponse")
-					.object("gc#country")
-						.stringValue("gc#name", "Spain")
-						.integerType("gc#population")
+				.object("getCountryResponse")
+					.object("country")
+						.stringValue("name", "Spain")
+						.integerType("population")
 					.closeObject()
 				.closeObject();
 		
