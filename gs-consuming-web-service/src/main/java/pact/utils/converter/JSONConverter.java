@@ -50,29 +50,20 @@ public class JSONConverter {
 		defaultJSONConfig = makeDefaultJSONConfig();
 	}
 
-	public static void xmlToJSON(Reader reader, Writer writer) throws FactoryConfigurationError, XMLStreamException,
-			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException, JSONException {
-		xmlToJSON(reader, writer, defaultJSONConfig);
-	}
-
-	public static String xmlToJSON(String xml) throws Exception {
-		Reader reader = new StringReader(xml);
-		StringWriter writer = new StringWriter();
-	
-		xmlToJSON(reader, writer);
-	
-		return writer.toString();
-	}
-
 	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig)
 			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
 			TransformerConfigurationException, TransformerException, IOException, JSONException {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
-
+	
 		xmlReaderToWriter(xmlReader, xmlWriter, emptyXMLToJsonNamespaces);
-
+	
 		xmlWriter.close();
+	}
+
+	public static void xmlToJSON(Reader reader, Writer writer) throws FactoryConfigurationError, XMLStreamException,
+			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException, JSONException {
+		xmlToJSON(reader, writer, defaultJSONConfig);
 	}
 
 	public static String xmlToJSON(String xml, Configuration jsonConfig) throws Exception {
@@ -80,6 +71,15 @@ public class JSONConverter {
 		StringWriter writer = new StringWriter();
 	
 		xmlToJSON(reader, writer, jsonConfig);
+	
+		return writer.toString();
+	}
+
+	public static String xmlToJSON(String xml) throws Exception {
+		Reader reader = new StringReader(xml);
+		StringWriter writer = new StringWriter();
+	
+		xmlToJSON(reader, writer);
 	
 		return writer.toString();
 	}
@@ -94,26 +94,22 @@ public class JSONConverter {
         copyEvent(xmlReader, xmlWriter, firstElem, xmlToJsonNamespaces);
 	}
 	
-	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer) throws JAXBException {
-		objToJSON(obj, cls, writer, defaultJSONConfig);
-	}
-
 	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer,
 			Configuration jsonConfig) throws JAXBException {
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 		JAXBContext jc = JAXBContext.newInstance(cls);
 		Marshaller marshaller = jc.createMarshaller();
-        marshaller.marshal(obj, xmlWriter);
+	    marshaller.marshal(obj, xmlWriter);
 	}
-	
-	public static void jsonToXML(String jsonText, Writer writer)
-			throws JSONException, XMLStreamException {
-		jsonToXML(jsonText, writer, defaultJSONConfig);
+
+	public static <S, T extends S> void objToJSON(T obj, Class<S> cls, Writer writer) throws JAXBException {
+		objToJSON(obj, cls, writer, defaultJSONConfig);
 	}
-	
-	public static String jsonToXML(String json) throws JSONException, XMLStreamException {
+
+	public static <S, T extends S> String objToJSON(T obj, Class<S> cls,
+			Configuration jsonConfig) throws Exception {
 		StringWriter writer = new StringWriter();
-		jsonToXML(json, writer);
+		objToJSON(obj, cls, writer, jsonConfig);
 		return writer.toString();
 	}
 
@@ -138,10 +134,20 @@ public class JSONConverter {
 		return writer.toString();
 	}
 
+	public static void jsonToXML(String jsonText, Writer writer)
+			throws JSONException, XMLStreamException {
+		jsonToXML(jsonText, writer, defaultJSONConfig);
+	}
+	
+	public static String jsonToXML(String json) throws JSONException, XMLStreamException {
+		StringWriter writer = new StringWriter();
+		jsonToXML(json, writer);
+		return writer.toString();
+	}
+
 	private static XMLStreamWriter makeJSONXMLStreamWriter(Writer writer, Configuration jsonConfig) {
 		MappedNamespaceConvention jsonConvention = new MappedNamespaceConvention(jsonConfig);
-		XMLStreamWriter xmlWriter = new MappedXMLStreamWriter(jsonConvention, writer);
-		return xmlWriter;
+		return new MappedXMLStreamWriter(jsonConvention, writer);
 	}
 	
 	private static boolean copyEvent(XMLStreamReader xmlReader, XMLStreamWriter xmlWriter,
@@ -191,12 +197,5 @@ public class JSONConverter {
 		}
 		
 		return firstElem;
-	}
-
-	public static <S, T extends S> String objToJSON(T obj, Class<S> cls,
-			Configuration jsonConfig) throws Exception {
-		StringWriter writer = new StringWriter();
-		objToJSON(obj, cls, writer, jsonConfig);
-		return writer.toString();
 	}
 }
