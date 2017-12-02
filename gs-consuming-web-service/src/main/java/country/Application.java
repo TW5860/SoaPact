@@ -38,7 +38,7 @@ public class Application {
 			request.setName(country);
 			GetCountryResponse response = countriesPort.getCountry(request);
 
-			logger.info("------------------ %s ------------------",response.getCountry().getCapital());
+			logger.error("------------------ {} ------------------",response.getCountry().getCapital());
 		};
 	}
 
