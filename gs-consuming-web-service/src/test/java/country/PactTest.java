@@ -10,9 +10,12 @@ import org.junit.Test;
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
 import au.com.dius.pact.consumer.ConsumerPactRunnerKt;
 import au.com.dius.pact.consumer.PactVerificationResult;
+import au.com.dius.pact.consumer.dsl.DslPart;
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.model.MockProviderConfig;
 import au.com.dius.pact.model.RequestResponsePact;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
+import io.spring.guides.gs_producing_web_service.Country;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.FileReader;
@@ -51,22 +54,18 @@ public class PactTest {
 	private static RequestResponsePact buildPact() {
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
-
 		PactDslSoapBody requestForAnExistingCountry = new PactDslSoapBody()
 				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
 				.fromObject(request, GetCountryRequest.class);
-		System.out.println("-------------------------------------------------------------------");
-		System.out.println(requestForAnExistingCountry);
-		System.out.println("-------------------------------------------------------------------");
 		
-//		DslPart responseForAnExistingCountry = new PactDslJsonBody()
-//				.object("getCountryResponse")
-//					.object("country")
-//						.stringValue("name", "Spain")
-//						.integerType("population")
-//					.closeObject()
-//				.closeObject();
-		String responseForAnExistingCountry = FileReader.readFile("ValidSoapResponseInJSON.json");
+		Country country = new Country();
+		country.setName("Spain");
+		country.setCapital("Madrid");
+		GetCountryResponse response = new GetCountryResponse();
+		response.setCountry(country);
+		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
+				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.fromObject(response, GetCountryResponse.class);
 	
 		return ConsumerPactBuilder
 				.consumer("Countries consumer")
@@ -74,7 +73,7 @@ public class PactTest {
 				.uponReceiving("A request for an existing country")
 					.path("/")
 					.method("POST")
-					//.body(requestForAnExistingCountry)
+					.body(requestForAnExistingCountry)
 				.willRespondWith()
 					.status(200)
 					.body(responseForAnExistingCountry)
