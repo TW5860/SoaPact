@@ -28,11 +28,12 @@ public class PactDslSoapBodyTest {
 	public void fromObject_setsBodyToAnEquivalentJsonObject() throws Exception {
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
-		
+
 		PactDslSoapBody body = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service")
+				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
 				.fromObject(request, GetCountryRequest.class);
 
-		JSONAssert.assertEquals("{getCountryRequest: {name: \"Spain\"}}", body.toString(), true);
+		JSONAssert.assertEquals("{\"ct#getCountryRequest\": {\"ct#name\": \"Spain\"}}",
+				body.toString(), true);
 	}
 }

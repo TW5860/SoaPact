@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.apache.http.entity.ContentType;
 import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 
@@ -17,6 +16,7 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.FileReader;
+import pact.utils.PactDslSoapBody;
 import pact.utils.converter.SOAPToJSONConverter;
 import pact.utils.proxy.SOAPToJSONReverseProxy;
 
@@ -49,19 +49,35 @@ public class PactTest {
 	}
 
 	private static RequestResponsePact buildPact() {
-		String jsonResponse = FileReader.readFile("ValidSoapResponseInJSON.json");
+		GetCountryRequest request = new GetCountryRequest();
+		request.setName("Spain");
+
+		PactDslSoapBody requestForAnExistingCountry = new PactDslSoapBody()
+				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.fromObject(request, GetCountryRequest.class);
+		System.out.println("-------------------------------------------------------------------");
+		System.out.println(requestForAnExistingCountry);
+		System.out.println("-------------------------------------------------------------------");
 		
-		RequestResponsePact pact = ConsumerPactBuilder
+//		DslPart responseForAnExistingCountry = new PactDslJsonBody()
+//				.object("getCountryResponse")
+//					.object("country")
+//						.stringValue("name", "Spain")
+//						.integerType("population")
+//					.closeObject()
+//				.closeObject();
+		String responseForAnExistingCountry = FileReader.readFile("ValidSoapResponseInJSON.json");
+	
+		return ConsumerPactBuilder
 				.consumer("Countries consumer")
 				.hasPactWith("Countries provider")
-				.uponReceiving("a request to retrieve country details")
-				.path("/")
-				.method("POST")
+				.uponReceiving("A request for an existing country")
+					.path("/")
+					.method("POST")
+					//.body(requestForAnExistingCountry)
 				.willRespondWith()
-				.status(200)
-				.body(jsonResponse,
-					  ContentType.APPLICATION_JSON)
+					.status(200)
+					.body(responseForAnExistingCountry)
 				.toPact();
-		return pact;
 	}
 }

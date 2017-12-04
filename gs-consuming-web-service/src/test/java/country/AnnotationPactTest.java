@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import org.codehaus.jettison.mapped.Configuration;
 
 import au.com.dius.pact.consumer.ConsumerPactTestMk2;
@@ -44,7 +42,7 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 			requestForAnExistingCountry = new PactDslSoapBody()
 					.withNs("http://spring.io/guides/gs-producing-web-service")
 					.fromObject(request, GetCountryRequest.class);
-		} catch (JAXBException e) {
+		} catch (RuntimeException e) {
 			requestForAnExistingCountry = new PactDslJsonBody()
 					.object("getCountryRequest")
 					.stringValue("name", "Spain")

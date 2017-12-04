@@ -19,15 +19,23 @@ public class PactDslSoapBody extends PactDslJsonBody {
 		jsonConfig = JSONConverter.makeDefaultJSONConfig();
 		namespaces = jsonConfig.getXmlToJsonNamespaces();
 	}
-
+	
 	public PactDslSoapBody withNs(String uri) {
-		namespaces.put(uri, "");
 		return this;
 	}
 
-	public <S, T extends S> PactDslSoapBody fromObject(T obj, Class<S> cls) throws JAXBException {
+	public PactDslSoapBody withNs(String uri, String prefix) {
+		namespaces.put(uri, prefix);
+		return this;
+	}
+
+	public <S, T extends S> PactDslSoapBody fromObject(T obj, Class<S> cls) {
 		StringWriter writer = new StringWriter();
-		JSONConverter.objToJSON(obj, cls, writer, jsonConfig);
+		try {
+			JSONConverter.objToJSON(obj, cls, writer, jsonConfig);
+		} catch (JAXBException e) {
+			throw new RuntimeException(e);
+		}
 		JSONObject jsonObj = new JSONObject(writer.toString());
 		
 		JSONObject bodyJsonObj = (JSONObject) this.getBody();
