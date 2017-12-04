@@ -20,10 +20,6 @@ public class PactDslSoapBody extends PactDslJsonBody {
 		namespaces = jsonConfig.getXmlToJsonNamespaces();
 	}
 	
-	public PactDslSoapBody withNs(String uri) {
-		return this;
-	}
-
 	public PactDslSoapBody withNs(String uri, String prefix) {
 		namespaces.put(uri, prefix);
 		return this;

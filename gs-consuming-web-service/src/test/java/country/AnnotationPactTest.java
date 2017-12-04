@@ -35,25 +35,18 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 	@Override
 	protected RequestResponsePact createPact(PactDslWithProvider builder) {
 		DslPart requestForAnExistingCountry;
-		try {
-			GetCountryRequest request = new GetCountryRequest();
-			request.setName("Spain");
-			
-			requestForAnExistingCountry = new PactDslSoapBody()
-					.withNs("http://spring.io/guides/gs-producing-web-service")
-					.fromObject(request, GetCountryRequest.class);
-		} catch (RuntimeException e) {
-			requestForAnExistingCountry = new PactDslJsonBody()
-					.object("getCountryRequest")
-					.stringValue("name", "Spain")
-					.closeObject();
-		}
+		GetCountryRequest request = new GetCountryRequest();
+		request.setName("Spain");
+
+		requestForAnExistingCountry = new PactDslSoapBody()
+				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.fromObject(request, GetCountryRequest.class);
 		
 		DslPart responseForAnExistingCountry = new PactDslJsonBody()
-				.object("getCountryResponse")
-					.object("country")
-						.stringValue("name", "Spain")
-						.integerType("population")
+				.object("ct#getCountryResponse")
+					.object("ct#country")
+						.stringValue("ct#name", "Spain")
+						.integerType("ct#population")
 					.closeObject()
 				.closeObject();
 		
@@ -70,7 +63,7 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 	protected void runTest(MockServer mockServer) throws IOException {
 		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "");
+		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
 		
 		SOAPToJSONReverseProxy.runTest(mockServer.getUrl(),jsonConfig , p -> {
 			CountriesPort countriesPort = CountryConfiguration.getCountriesPort(p.getUrl());
