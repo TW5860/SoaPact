@@ -50,9 +50,7 @@ public class JSONConverter {
 		defaultJSONConfig = makeDefaultJSONConfig();
 	}
 
-	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig)
-			throws FactoryConfigurationError, XMLStreamException, TransformerFactoryConfigurationError,
-			TransformerConfigurationException, TransformerException, IOException, JSONException {
+	public static void xmlToJSON(Reader reader, Writer writer, Configuration jsonConfig) throws XMLStreamException, JSONException {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		XMLStreamWriter xmlWriter = makeJSONXMLStreamWriter(writer, jsonConfig);
 	
@@ -61,12 +59,11 @@ public class JSONConverter {
 		xmlWriter.close();
 	}
 
-	public static void xmlToJSON(Reader reader, Writer writer) throws FactoryConfigurationError, XMLStreamException,
-			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException, JSONException {
+	public static void xmlToJSON(Reader reader, Writer writer) throws XMLStreamException, JSONException {
 		xmlToJSON(reader, writer, defaultJSONConfig);
 	}
 
-	public static String xmlToJSON(String xml, Configuration jsonConfig) throws Exception {
+	public static String xmlToJSON(String xml, Configuration jsonConfig) throws XMLStreamException, JSONException {
 		Reader reader = new StringReader(xml);
 		StringWriter writer = new StringWriter();
 	
@@ -75,7 +72,7 @@ public class JSONConverter {
 		return writer.toString();
 	}
 
-	public static String xmlToJSON(String xml) throws Exception {
+	public static String xmlToJSON(String xml) throws XMLStreamException, JSONException {
 		Reader reader = new StringReader(xml);
 		StringWriter writer = new StringWriter();
 	
