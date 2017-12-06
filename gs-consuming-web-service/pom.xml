@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-core</artifactId>
-			<version>${undertow.version}</version><!--$NO-MVN-MAN-VER$-->
+			<version>${undertow.version}</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20160212</version><!--$NO-MVN-MAN-VER$-->
+			<version>20160212</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/au.com.dius/pact-jvm-consumer-junit_2.11 -->
@@ -76,24 +76,37 @@
 		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>
-			<version>1.5.0</version><!--$NO-MVN-MAN-VER$-->
+			<version>1.5.0</version><!--$NO-MVN-MAN-VER$ -->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.xmlunit</groupId>
-    		<artifactId>xmlunit-core</artifactId>
-    		<version>2.5.0</version>
-    		<scope>test</scope>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-core</artifactId>
+			<version>2.5.0</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.xmlunit</groupId>
-    		<artifactId>xmlunit-matchers</artifactId>
-    		<version>2.5.0</version>
-    		<scope>test</scope>
-		</dependency>	
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-matchers</artifactId>
+			<version>2.5.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>1.2.1.Final</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
