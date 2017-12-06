@@ -20,12 +20,17 @@ public class XMLNamespaceExtractor {
 		XMLStreamReader xmlReader;
 		try {
 			xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
+		} catch (XMLStreamException | FactoryConfigurationError e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
 			while (xmlReader.hasNext()) {
 			    processEvent(xmlReader, namespaces);
 			    xmlReader.next();
 			}
 			processEvent(xmlReader, namespaces);
-		} catch (XMLStreamException | FactoryConfigurationError e) {
+		} catch (XMLStreamException e) {
 			throw new RuntimeException(e);
 		}
 
