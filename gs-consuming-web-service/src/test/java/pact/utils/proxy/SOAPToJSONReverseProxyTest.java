@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.codehaus.jettison.mapped.Configuration;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -22,6 +23,7 @@ import pact.utils.converter.SOAPToJSONConverter;
 public class SOAPToJSONReverseProxyTest {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+	@Ignore
 	@Test
 	public void shouldConvertBetweenXMLandJSON() throws IOException {
 		// Prepare:

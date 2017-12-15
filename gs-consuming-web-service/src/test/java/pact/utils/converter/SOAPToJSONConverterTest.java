@@ -1,10 +1,11 @@
 package pact.utils.converter;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -12,30 +13,29 @@ import pact.utils.FileReader;
 import pact.utils.XMLCompare;
 
 public class SOAPToJSONConverterTest {
-	private Configuration makeTestConfiguration() {
-		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
-		return jsonConfig;
+	@Test
+	public void namespaceMapForXML_createsAMapWithHashedUris() {
+		String soapRequestInXML = FileReader.readFile("ValidSoapRequest.xml");
+		Map<String, String> expected = new HashMap<>();
+		expected.put("http://schemas.xmlsoap.org/soap/envelope/", "Byxibe");
+		expected.put("http://spring.io/guides/gs-producing-web-service", "Je");
+		assertThat(SOAPToJSONConverter.namespaceMapForXML(soapRequestInXML),
+				equalTo(expected));
 	}
-
+	
 	@Test
 	public void soapRequestToJSON_convertsSimpleXMLRequestToJSON() throws Exception {
-		Configuration jsonConfig = makeTestConfiguration();
-
 		String soapRequestInXML = FileReader.readFile("ValidSoapRequest.xml");
 		String soapRequestInJSON = FileReader.readFile("ValidSoapRequestInJSON.json");
 		JSONAssert.assertEquals(soapRequestInJSON,
-				SOAPToJSONConverter.soapRequestToJSON(soapRequestInXML, jsonConfig), true);
+				SOAPToJSONConverter.soapRequestToJSON(soapRequestInXML), true);
 	}
 
 	@Test
 	public void jsonToSoapResponse_convertsSimpleJSONResponseToXML() throws Exception {
-		Configuration jsonConfig = makeTestConfiguration();
-
 		String soapResponseInJSON = FileReader.readFile("ValidSoapResponseInJSON.json");
 		String soapResponseInXML = FileReader.readFile("ValidSoapResponse.xml");
-		String soapResponseXMLText = SOAPToJSONConverter.jsonToSoapResponse(soapResponseInJSON, jsonConfig);
+		String soapResponseXMLText = SOAPToJSONConverter.jsonToSoapResponse(soapResponseInJSON);
 		assertThat(soapResponseXMLText, XMLCompare.isEquivalentXMLTo(soapResponseInXML));
 	}
 }

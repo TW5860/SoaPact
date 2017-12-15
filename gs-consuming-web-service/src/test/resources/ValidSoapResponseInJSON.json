@@ -1,4 +1,7 @@
 {
+	"#xmlns": {
+        "ct": "http://spring.io/guides/gs-producing-web-service"
+    },
 	"ct#getCountryResponse": {
 		"ct#country": {
 			"ct#name": "Spain",
