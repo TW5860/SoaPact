@@ -11,18 +11,15 @@ import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONReverseProxy extends ReverseProxy {
 
-	private Configuration jsonConfig;
-
-	public SOAPToJSONReverseProxy(String backServerURL, Configuration jsonConfig) {
+	public SOAPToJSONReverseProxy(String backServerURL) {
 		super(backServerURL);
-		this.jsonConfig = jsonConfig;
 	}
 
 	@Override
 	protected String changeRequest(InputStream bodyInputStream) throws IOException {
 		String bodyText = IOUtils.toString(bodyInputStream);
 		try {
-			return SOAPToJSONConverter.soapRequestToJSON(bodyText, jsonConfig);
+			return SOAPToJSONConverter.soapRequestToJSON(bodyText);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -32,7 +29,7 @@ public class SOAPToJSONReverseProxy extends ReverseProxy {
 	@Override
 	protected String changeResponse(String bodyText) {
 		try {
-			return SOAPToJSONConverter.jsonToSoapResponse(bodyText, jsonConfig);
+			return SOAPToJSONConverter.jsonToSoapResponse(bodyText);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -40,12 +37,7 @@ public class SOAPToJSONReverseProxy extends ReverseProxy {
 	}
 
 	public static void runTest(String backServerURL, TestCase testCase) {
-		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL, JSONConverter.makeDefaultJSONConfig());
-		proxy.runTest(testCase);
-	}
-
-	public static void runTest(String backServerURL, Configuration jsonConfig, TestCase testCase) {
-		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL, jsonConfig);
+		ReverseProxy proxy = new SOAPToJSONReverseProxy(backServerURL);
 		proxy.runTest(testCase);
 	}
 }

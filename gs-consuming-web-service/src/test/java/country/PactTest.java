@@ -2,9 +2,6 @@ package country;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Map;
-
-import org.codehaus.jettison.mapped.Configuration;
 import org.junit.Test;
 
 import au.com.dius.pact.consumer.ConsumerPactBuilder;
@@ -17,7 +14,6 @@ import io.spring.guides.gs_producing_web_service.Country;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.PactDslSoapBody;
-import pact.utils.converter.SOAPToJSONConverter;
 import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class PactTest {
@@ -27,12 +23,8 @@ public class PactTest {
 		RequestResponsePact pact = buildPact();
 		MockProviderConfig createDefault = MockProviderConfig.createDefault();
 
-		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
-
 		PactVerificationResult result = ConsumerPactRunnerKt.runConsumerTest(pact, createDefault, pactServer -> {
-			SOAPToJSONReverseProxy.runTest(pactServer.getUrl(), jsonConfig, pactSOAPServer -> {
+			SOAPToJSONReverseProxy.runTest(pactServer.getUrl(), pactSOAPServer -> {
 				CountriesPort countriesPort = CountryConfiguration.getCountriesPort(pactSOAPServer.getUrl());
 				GetCountryRequest request = new GetCountryRequest();
 				request.setName("Spain");
@@ -52,7 +44,7 @@ public class PactTest {
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
 		PactDslSoapBody requestForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
 				.fromObject(request, GetCountryRequest.class);
 		
 		Country country = new Country();
@@ -61,7 +53,7 @@ public class PactTest {
 		GetCountryResponse response = new GetCountryResponse();
 		response.setCountry(country);
 		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
 				.fromObject(response, GetCountryResponse.class);
 	
 		return ConsumerPactBuilder

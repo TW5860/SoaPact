@@ -3,10 +3,7 @@ package pact.utils.proxy;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.Map;
 
-import org.codehaus.jettison.mapped.Configuration;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -18,12 +15,10 @@ import okhttp3.Response;
 import pact.utils.FileReader;
 import pact.utils.StaticBackendServer;
 import pact.utils.XMLCompare;
-import pact.utils.converter.SOAPToJSONConverter;
 
 public class SOAPToJSONReverseProxyTest {
 	public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-	@Ignore
 	@Test
 	public void shouldConvertBetweenXMLandJSON() throws IOException {
 		// Prepare:
@@ -31,12 +26,8 @@ public class SOAPToJSONReverseProxyTest {
 		OkHttpClient client = new OkHttpClient();
 
 		// Act:
-		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
-		
 		StaticBackendServer.runTest(responseText, endServer -> {
-			SOAPToJSONReverseProxy.runTest(endServer.getUrl(), jsonConfig, proxy -> {	
+			SOAPToJSONReverseProxy.runTest(endServer.getUrl(), proxy -> {	
 				// Act:
 				String requestText = FileReader.readFile("ValidSoapRequest.xml");
 				RequestBody body = RequestBody.create(JSON, requestText);

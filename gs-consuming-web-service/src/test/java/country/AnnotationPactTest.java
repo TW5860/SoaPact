@@ -3,21 +3,17 @@ package country;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Map;
-
-import org.codehaus.jettison.mapped.Configuration;
 
 import au.com.dius.pact.consumer.ConsumerPactTestMk2;
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.DslPart;
-import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.model.RequestResponsePact;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
+import io.spring.guides.gs_producing_web_service.Country;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
 import pact.utils.PactDslSoapBody;
-import pact.utils.converter.SOAPToJSONConverter;
 import pact.utils.proxy.SOAPToJSONReverseProxy;
 
 public class AnnotationPactTest extends ConsumerPactTestMk2 {
@@ -37,18 +33,18 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 		DslPart requestForAnExistingCountry;
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
-
 		requestForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "ct")
+				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(request, GetCountryRequest.class);
 		
-		DslPart responseForAnExistingCountry = new PactDslJsonBody()
-				.object("ct#getCountryResponse")
-					.object("ct#country")
-						.stringValue("ct#name", "Spain")
-						.integerType("ct#population")
-					.closeObject()
-				.closeObject();
+		Country country = new Country();
+		country.setName("Spain");
+		country.setCapital("Madrid");
+		GetCountryResponse response = new GetCountryResponse();
+		response.setCountry(country);
+		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
+				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
+				.fromObject(response, GetCountryResponse.class);
 		
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
 				.uponReceiving("A request for an existing country").path("/").method("POST")
@@ -61,11 +57,7 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
 	@Override
 	protected void runTest(MockServer mockServer) throws IOException {
-		Configuration jsonConfig = SOAPToJSONConverter.makeDefaultJSONConfig();
-		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
-		namespaces.put("http://spring.io/guides/gs-producing-web-service", "ct");
-		
-		SOAPToJSONReverseProxy.runTest(mockServer.getUrl(),jsonConfig , p -> {
+		SOAPToJSONReverseProxy.runTest(mockServer.getUrl(), p -> {
 			CountriesPort countriesPort = CountryConfiguration.getCountriesPort(p.getUrl());
 			GetCountryResponse country = countriesPort
 					.getCountry(getCounrtyRequestForAnExistingCountry());
