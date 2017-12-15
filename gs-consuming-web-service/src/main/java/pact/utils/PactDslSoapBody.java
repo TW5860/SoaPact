@@ -29,10 +29,6 @@ public class PactDslSoapBody extends PactDslJsonBody {
 		return this;
 	}
 
-	public PactDslSoapBody withNs(String uri, String prefix) {
-		return this.withNs(uri);
-	}
-
 	public <S, T extends S> PactDslSoapBody fromObject(T obj, Class<S> cls) {
 		StringWriter writer = new StringWriter();
 		try {

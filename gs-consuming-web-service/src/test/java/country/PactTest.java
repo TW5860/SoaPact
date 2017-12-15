@@ -44,7 +44,7 @@ public class PactTest {
 		GetCountryRequest request = new GetCountryRequest();
 		request.setName("Spain");
 		PactDslSoapBody requestForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
+				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(request, GetCountryRequest.class);
 		
 		Country country = new Country();
@@ -53,7 +53,7 @@ public class PactTest {
 		GetCountryResponse response = new GetCountryResponse();
 		response.setCountry(country);
 		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
+				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(response, GetCountryResponse.class);
 	
 		return ConsumerPactBuilder

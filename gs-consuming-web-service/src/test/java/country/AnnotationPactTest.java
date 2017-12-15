@@ -43,7 +43,7 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 		GetCountryResponse response = new GetCountryResponse();
 		response.setCountry(country);
 		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service", "Je")
+				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(response, GetCountryResponse.class);
 		
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
