@@ -2,6 +2,7 @@ package pact.utils;
 
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 
@@ -10,8 +11,11 @@ import org.json.JSONObject;
 
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import pact.utils.converter.JSONConverter;
+import pact.utils.readablehash.ReadableHash;
 
 public class PactDslSoapBody extends PactDslJsonBody {
+	private static ReadableHash readableHash = new ReadableHash();
+
 	private Map<String, String> namespaces;
 	private Configuration jsonConfig;
 	
@@ -20,9 +24,13 @@ public class PactDslSoapBody extends PactDslJsonBody {
 		namespaces = jsonConfig.getXmlToJsonNamespaces();
 	}
 	
-	public PactDslSoapBody withNs(String uri, String prefix) {
-		namespaces.put(uri, prefix);
+	public PactDslSoapBody withNs(String uri) {
+		namespaces.put(uri, readableHash.hashAsReadableString(uri));
 		return this;
+	}
+
+	public PactDslSoapBody withNs(String uri, String prefix) {
+		return this.withNs(uri);
 	}
 
 	public <S, T extends S> PactDslSoapBody fromObject(T obj, Class<S> cls) {
@@ -43,6 +51,13 @@ public class PactDslSoapBody extends PactDslJsonBody {
 				bodyJsonObj.put(key, JSONObject.NULL);
 			}
 		}
+		
+		JSONObject nsObj = new JSONObject();
+		for (Entry<String, String> entry : namespaces.entrySet()) {
+			String nsUri = entry.getKey();
+			nsObj.put(entry.getValue(), nsUri);
+		}
+		bodyJsonObj.put("#xmlns", nsObj);
 
 		return this;
 	}
