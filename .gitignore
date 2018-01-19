@@ -6,4 +6,4 @@
 **/.mvn
 misc.xml
 *.iml
-
+/**/.idea/**
