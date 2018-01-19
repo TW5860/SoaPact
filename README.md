@@ -4,6 +4,7 @@ This is a project to create Soap/Xml support for pact-jvm via a reverse proxy th
 
 This project was inspired by the need for Consumer Driven Contract Testing at a client with mostly Soap based webservices.
 
+![Alt text](/pact-soap-extension.png?raw=true "Soap Consumer Pact Test")
 
 ## Structure
 
