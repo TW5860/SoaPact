@@ -1,63 +1,45 @@
 package hello;
 
-import java.util.Map;
-
-import org.apache.http.HttpRequest;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import au.com.dius.pact.provider.junit.PactRunner;
 import au.com.dius.pact.provider.junit.Provider;
 import au.com.dius.pact.provider.junit.State;
-import au.com.dius.pact.provider.junit.TargetRequestFilter;
 import au.com.dius.pact.provider.junit.loader.PactFolder;
-import au.com.dius.pact.provider.junit.target.HttpTarget;
 import au.com.dius.pact.provider.junit.target.Target;
 import au.com.dius.pact.provider.junit.target.TestTarget;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import pact.utils.SoapTarget;
 
 
-@RunWith(PactRunner.class)
-@Provider("Country-Data-Provider")
-@PactFolder("pacts")
+@RunWith(PactRunner.class) // Say JUnit to run tests with custom Runner
+@Provider("Country-Data-Provider") // Set up name of tested provider
+@PactFolder("pacts") // Point where to find pacts (See also section Pacts source in documentation)
 public class ContractTest {
     // NOTE: this is just an example of embedded service that listens to requests, you should start here real service
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractTest.class);
-    @TestTarget
-    public final Target target = new HttpTarget(61600);
-
-    @BeforeClass
+    @BeforeClass //Method will be run once: before whole contract test suite
     public static void setUpService() {
         //Run DB, create schema
         //Run service
         //...
+        // TODO: Start Provider
+        // TODO: Fix Content Type Header Missmatch Error (Lines deleted from contract)
     }
 
-    @Before
+    @Before //Method will be run before each test of interaction
     public void before() {
         // Rest data
         // Mock dependent service responses
         // ...
     }
 
-    @State("provider is available")
+    @State("provider is available") // Method will be run before testing interactions that require "default" or "no-data" state
     public void toDefaultState() {
         // Prepare service before interaction that require "default" state
         // ...
-      LOGGER.info("Now service in default state");
+        System.out.println("Now service in default state");
     }
 
-    @State("state 2")
-    public void toSecondState(Map<?, ?> params) {
-        // Prepare service before interaction that require "state 2" state
-        // ...
-        LOGGER.info("Now service in 'state 2' state: " + params);
-    }
-
-    @TargetRequestFilter
-    public void exampleRequestFilter(HttpRequest request) {
-      LOGGER.info("exampleRequestFilter called: " + request);
-    }
+    @TestTarget // Annotation denotes Target that will be used for tests
+    public final Target target = new SoapTarget(8083,8084); // Out-of-the-box implementation of Target (for more information take a look at Test Target section)
 }

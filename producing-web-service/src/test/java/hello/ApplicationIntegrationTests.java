@@ -30,9 +30,10 @@ import org.springframework.util.ClassUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
+import server.Application;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ApplicationIntegrationTests {
 
     private Jaxb2Marshaller marshaller = new Jaxb2Marshaller();

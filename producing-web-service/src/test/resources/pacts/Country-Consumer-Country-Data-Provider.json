@@ -11,9 +11,6 @@
             "request": {
                 "method": "POST",
                 "path": "/",
-                "headers": {
-                    "Content-Type": "application/json; charset=UTF-8"
-                },
                 "body": {
                     "Je#getCountryRequest": {
                         "Je#name": "Spain"
@@ -25,14 +22,10 @@
             },
             "response": {
                 "status": 200,
-                "headers": {
-                    "Content-Type": "application/json; charset=UTF-8"
-                },
                 "body": {
                     "Je#getCountryResponse": {
                         "Je#country": {
                             "Je#name": "Spain",
-                            "Je#population": 0,
                             "Je#capital": "Madrid"
                         }
                     },
@@ -53,7 +46,7 @@
             "version": "3.0.0"
         },
         "pact-jvm": {
-            "version": "3.5.8"
+            "version": "3.5.10"
         }
     }
 }
