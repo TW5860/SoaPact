@@ -27,8 +27,8 @@ public class PactDslSoapBody extends PactDslJsonBody {
         namespaces = jsonConfig.getXmlToJsonNamespaces();
     }
 
-    public PactDslSoapBody(String s, String s1, DslPart dslPart, Map<String, String> namespaces, String currentNamespace) {
-        super(s, s1, dslPart);
+    public PactDslSoapBody(String rootPath, String rootName, DslPart parent, Map<String, String> namespaces, String currentNamespace) {
+        super(rootPath, rootName, parent);
         this.namespaces = namespaces;
         this.mostRecentNameSpace = currentNamespace;
     }
@@ -82,9 +82,39 @@ public class PactDslSoapBody extends PactDslJsonBody {
         return this;
     }
 
+    //region PactDslJsonBody overrides to add the namespace
+
+    //TODO: Experiment with PactDslJsonBody and the rootname field
+
+    @Override
+    public PactDslSoapBody stringValue(String name, String value) {
+        super.stringValue(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody numberValue(String name, Number value) {
+        super.numberValue(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody booleanValue(String name, Boolean value) {
+        super.booleanValue(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
+        return this;
+    }
+
     @Override
     public PactDslSoapBody numberType(String name) {
         super.numberType(name);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody numberType(String... names) {
+        for (String name : names) {
+            this.numberType(name);
+        }
         return this;
     }
 
@@ -95,10 +125,107 @@ public class PactDslSoapBody extends PactDslJsonBody {
     }
 
     @Override
-    public PactDslSoapBody stringType(String name, String value) {
-        super.stringType(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
+    public PactDslSoapBody stringType(String name) {
+        super.stringType(name);
         return this;
     }
+
+    @Override
+    public PactDslSoapBody stringType(String... names) {
+        for (String name : names) {
+            super.stringType(name);
+        }
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody stringType(String name, String example) {
+        super.stringType(mostRecentNameSpace + NAMESPACE_PREFIX + name, example);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody integerType(String name) {
+        super.integerType(name);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody integerType(String... names) {
+        for (String name : names) {
+            this.integerType(name);
+        }
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody integerType(String name, Long number) {
+        super.integerType(mostRecentNameSpace + NAMESPACE_PREFIX + name, number);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody integerType(String name, Integer number) {
+        super.integerType(mostRecentNameSpace + NAMESPACE_PREFIX + name, number);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody decimalType(String name) {
+        super.decimalType(name);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody decimalType(String name, Double value) {
+        super.decimalType(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody booleanType(String name) {
+        super.booleanType(name);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody booleanType(String... names) {
+        for (String name : names) {
+            super.booleanType(name);
+        }
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody booleanType(String name, Boolean example) {
+        super.booleanType(name, example);
+        return this;
+    }
+
+    @Override
+    public PactDslJsonBody stringMatcher(String name, String regex, String example) {
+        super.stringMatcher(mostRecentNameSpace + NAMESPACE_PREFIX + name, regex, example);
+        return this;
+    }
+
+    @Override
+    public PactDslJsonBody timestamp() {
+        super.timestamp();
+        return this;
+    }
+
+    @Override
+    public PactDslJsonBody timestamp(String name) {
+        super.timestamp(mostRecentNameSpace + NAMESPACE_PREFIX + name);
+        return this;
+    }
+
+    @Override
+    public PactDslJsonBody timestamp(String name, String format) {
+        super.timestamp(mostRecentNameSpace + NAMESPACE_PREFIX + name, format);
+        return this;
+    }
+
 
     @Override
     public PactDslSoapBody object() {
@@ -116,13 +243,52 @@ public class PactDslSoapBody extends PactDslJsonBody {
         return new PactDslSoapBody(base + ".", "", this, namespaces, mostRecentNameSpace);
     }
 
+    @Override
     public PactDslSoapBody closeObject() {
-        if (this.parent != null) {
-            this.parent.putObject(this);
-        }
-
-        this.closed = true;
-        return (PactDslSoapBody) this.parent;
+        return (PactDslSoapBody) super.closeObject();
     }
+
+    @Override
+    public PactDslSoapBody closeArray() {
+        return (PactDslSoapBody) super.closeObject();
+    }
+
+    @Override
+    public PactDslSoapBody eachLike(String name) {
+        super.eachLike(name);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody eachLike(String name, int numExamples) {
+        super.eachLike(mostRecentNameSpace + NAMESPACE_PREFIX + name, numExamples);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody minArrayLike(String name, Integer size) {
+        super.minArrayLike(name, size);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody minArrayLike(String name, Integer size, int numExamples) {
+        super.minArrayLike(mostRecentNameSpace + NAMESPACE_PREFIX + name, size, numExamples);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody maxArrayLike(String name, Integer size) {
+        super.maxArrayLike(name, size);
+        return this;
+    }
+
+    @Override
+    public PactDslSoapBody maxArrayLike(String name, Integer size, int numExamples) {
+        super.maxArrayLike(mostRecentNameSpace + NAMESPACE_PREFIX + name, size, numExamples);
+        return this;
+    }
+
+    //endregion
 
 }
