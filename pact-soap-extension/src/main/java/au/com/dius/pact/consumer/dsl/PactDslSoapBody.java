@@ -14,12 +14,13 @@ import java.util.Map.Entry;
 
 public class PactDslSoapBody extends PactDslJsonBody {
     public static final String NAMESPACE_PREFIX = "#";
+
     private static ReadableHash readableHash = new ReadableHash();
 
     private Map<String, String> namespaces;
     private Configuration jsonConfig;
 
-    private String mostRecentNameSpace = "test";
+    private String mostRecentNameSpace = "";
 
     public PactDslSoapBody() {
         jsonConfig = JSONConverter.makeDefaultJSONConfig();
