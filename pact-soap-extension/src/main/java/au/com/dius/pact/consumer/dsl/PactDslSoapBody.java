@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class PactDslSoapBody extends PactDslJsonBody {
+    public static final String NAMESPACE_PREFIX = "#";
     private static ReadableHash readableHash = new ReadableHash();
 
     private Map<String, String> namespaces;
@@ -42,7 +43,7 @@ public class PactDslSoapBody extends PactDslJsonBody {
             nsObj.put(entry.getValue(), nsUri);
         }
         JSONObject bodyJsonObj = (JSONObject) this.getBody();
-        bodyJsonObj.put("#xmlns", nsObj);
+        bodyJsonObj.put(NAMESPACE_PREFIX + "xmlns", nsObj);
 
         return this;
     }
@@ -88,13 +89,13 @@ public class PactDslSoapBody extends PactDslJsonBody {
 
     @Override
     public PactDslSoapBody numberType(String name, Number number) {
-        super.numberType(mostRecentNameSpace + "#" + name, number);
+        super.numberType(mostRecentNameSpace + NAMESPACE_PREFIX + name, number);
         return this;
     }
 
     @Override
     public PactDslSoapBody stringType(String name, String value) {
-        super.stringType(mostRecentNameSpace + "#" + name, value);
+        super.stringType(mostRecentNameSpace + NAMESPACE_PREFIX + name, value);
         return this;
     }
 
@@ -106,7 +107,7 @@ public class PactDslSoapBody extends PactDslJsonBody {
 
     @Override
     public PactDslSoapBody object(String name) {
-        String base = rootPath + mostRecentNameSpace + "#" + name;
+        String base = rootPath + mostRecentNameSpace + NAMESPACE_PREFIX + name;
         if (!name.matches(Parser$.MODULE$.FieldRegex().toString())) {
             base = StringUtils.substringBeforeLast(rootPath, ".") + "['" + name + "']";
         }

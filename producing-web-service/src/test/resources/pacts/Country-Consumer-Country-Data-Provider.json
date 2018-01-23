@@ -11,6 +11,9 @@
             "request": {
                 "method": "POST",
                 "path": "/",
+                "headers": {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
                 "body": {
                     "Je#getCountryRequest": {
                         "Je#name": "Spain"
@@ -22,11 +25,14 @@
             },
             "response": {
                 "status": 200,
+                "headers": {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
                 "body": {
                     "Je#getCountryResponse": {
                         "Je#country": {
                             "Je#name": "Spain",
-                            "Je#population": 100
+                            "Je#capital": "Madrid"
                         }
                     },
                     "#xmlns": {
@@ -35,22 +41,21 @@
                 },
                 "matchingRules": {
                     "body": {
-                        "$['Je#getCountryResponse']['Je#country']['Je#population']": {
+                        "$.Je#getCountryResponse.Je#country['Je#name']": {
                             "matchers": [
                                 {
-                                    "match": "integer"
+                                    "match": "type"
                                 }
                             ],
                             "combine": "AND"
-                        }
-                    }
-                },
-                "generators": {
-                    "body": {
-                        "$['Je#getCountryResponse']['Je#country']['Je#population']": {
-                            "type": "RandomInt",
-                            "min": 0,
-                            "max": 2147483647
+                        },
+                        "$.Je#getCountryResponse.Je#country['Je#capital']": {
+                            "matchers": [
+                                {
+                                    "match": "type"
+                                }
+                            ],
+                            "combine": "AND"
                         }
                     }
                 }
