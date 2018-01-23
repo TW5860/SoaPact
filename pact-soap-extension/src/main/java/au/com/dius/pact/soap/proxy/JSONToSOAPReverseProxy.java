@@ -28,11 +28,9 @@ public class JSONToSOAPReverseProxy extends ReverseProxy {
     @Override
     protected String changeRequest(InputStream bodyInputStream) throws IOException {
         String bodyText = IOUtils.toString(bodyInputStream);
-        System.out.println("Request was :" + bodyText);
         try {
             String json = SOAPToJSONConverter.jsonToSoapResponse(bodyText);
             json = json.replace("<?xml version='1.0'?>", "");
-            System.out.println("Sending request :" + json);
             return json;
         } catch (XMLStreamException | JSONException e) {
             throw new RuntimeException(e);
@@ -42,9 +40,7 @@ public class JSONToSOAPReverseProxy extends ReverseProxy {
     @Override
     protected String changeResponse(String bodyText) {
         try {
-            System.out.println("Response was :" + bodyText);
             String xml = SOAPToJSONConverter.soapRequestToJSON(bodyText);
-            System.out.println("Sending response :" + xml);
             return xml;
         } catch (JSONException | XMLStreamException e) {
             throw new RuntimeException(e);
