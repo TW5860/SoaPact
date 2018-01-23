@@ -13,8 +13,8 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.Country;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
-import pact.utils.PactDslSoapBody;
-import pact.utils.proxy.SOAPToJSONReverseProxy;
+import au.com.dius.pact.consumer.dsl.PactDslSoapBody;
+import au.com.dius.pact.soap.proxy.SOAPToJSONReverseProxy;
 
 public class PactTest {
 

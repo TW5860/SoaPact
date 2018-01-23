@@ -26,11 +26,32 @@
                     "Je#getCountryResponse": {
                         "Je#country": {
                             "Je#name": "Spain",
-                            "Je#capital": "Madrid"
+                            "Je#population": 100
                         }
                     },
                     "#xmlns": {
                         "Je": "http://spring.io/guides/gs-producing-web-service"
+                    }
+                },
+                "matchingRules": {
+                    "body": {
+                        "$['Je#getCountryResponse']['Je#country']['Je#population']": {
+                            "matchers": [
+                                {
+                                    "match": "integer"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
+                },
+                "generators": {
+                    "body": {
+                        "$['Je#getCountryResponse']['Je#country']['Je#population']": {
+                            "type": "RandomInt",
+                            "min": 0,
+                            "max": 2147483647
+                        }
                     }
                 }
             },
@@ -46,7 +67,7 @@
             "version": "3.0.0"
         },
         "pact-jvm": {
-            "version": "3.5.10"
+            "version": "3.5.8"
         }
     }
 }

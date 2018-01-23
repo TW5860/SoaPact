@@ -9,7 +9,7 @@ import au.com.dius.pact.provider.junit.target.TestTarget;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import pact.utils.SoapTarget;
+import au.com.dius.pact.soap.provider.SoapTarget;
 
 
 @RunWith(PactRunner.class) // Say JUnit to run tests with custom Runner

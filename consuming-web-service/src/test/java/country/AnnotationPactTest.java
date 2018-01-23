@@ -13,8 +13,8 @@ import io.spring.guides.gs_producing_web_service.CountriesPort;
 import io.spring.guides.gs_producing_web_service.Country;
 import io.spring.guides.gs_producing_web_service.GetCountryRequest;
 import io.spring.guides.gs_producing_web_service.GetCountryResponse;
-import pact.utils.PactDslSoapBody;
-import pact.utils.proxy.SOAPToJSONReverseProxy;
+import au.com.dius.pact.consumer.dsl.PactDslSoapBody;
+import au.com.dius.pact.soap.proxy.SOAPToJSONReverseProxy;
 
 public class AnnotationPactTest extends ConsumerPactTestMk2 {
 
@@ -22,7 +22,7 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 	protected String consumerName() {
 		return "Country-Consumer";
 	}
-	
+
 	@Override
 	protected String providerName() {
 		return "Country-Data-Provider";
@@ -36,16 +36,30 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 		requestForAnExistingCountry = new PactDslSoapBody()
 				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(request, GetCountryRequest.class);
-		
+
 		Country country = new Country();
 		country.setName("Spain");
 		country.setCapital("Madrid");
 		GetCountryResponse response = new GetCountryResponse();
 		response.setCountry(country);
-		PactDslSoapBody responseForAnExistingCountry = new PactDslSoapBody()
+
+		// From Object
+		DslPart responseForAnExistingCountry = new PactDslSoapBody()
 				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(response, GetCountryResponse.class);
-		
+
+		// As SoapBody Object
+		// TODO: Enable type matching without specific values like:	.numberType("population")
+		responseForAnExistingCountry = new PactDslSoapBody()
+				.withNs("http://spring.io/guides/gs-producing-web-service")
+				.object("getCountryResponse")
+					.object("country")
+						.stringType("name","Spain")
+						.stringType("capital", "Madrid")
+				.closeObject()
+			.closeObject()
+        .close();
+
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
 				.uponReceiving("A request for an existing country").path("/").method("POST")
 					.body(requestForAnExistingCountry)
