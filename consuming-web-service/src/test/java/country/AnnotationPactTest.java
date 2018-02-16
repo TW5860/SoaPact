@@ -7,6 +7,7 @@ import java.io.IOException;
 import au.com.dius.pact.consumer.ConsumerPactTestMk2;
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.DslPart;
+import au.com.dius.pact.consumer.dsl.PactDslSoapBody2;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.model.RequestResponsePact;
 import io.spring.guides.gs_producing_web_service.CountriesPort;
@@ -44,21 +45,25 @@ public class AnnotationPactTest extends ConsumerPactTestMk2 {
 		response.setCountry(country);
 
 		// From Object
-		DslPart responseForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service")
-				.fromObject(response, GetCountryResponse.class);
+//		DslPart responseForAnExistingCountry = new PactDslSoapBody()
+//				.withNs("http://spring.io/guides/gs-producing-web-service")
+//				.fromObject(response, GetCountryResponse.class);
+
+		PactDslSoapBody2 responseForAnExistingCountry = new PactDslSoapBody2();
+		responseForAnExistingCountry.withNs("http://spring.io/guides/gs-producing-web-service")
+				.fromObject(response,GetCountryResponse.class);
 
 		// As SoapBody Object
 		// TODO: Enable type matching without specific values like:	.numberType("population")
-		responseForAnExistingCountry = new PactDslSoapBody()
-				.withNs("http://spring.io/guides/gs-producing-web-service")
-				.object("getCountryResponse")
-					.object("country")
-						.stringType("name","Spain")
-						.stringType("capital", "Madrid")
-				.closeObject()
-			.closeObject()
-        .close();
+//		responseForAnExistingCountry = new PactDslSoapBody()
+//				.withNs("http://spring.io/guides/gs-producing-web-service")
+//				.object("getCountryResponse")
+//					.object("country")
+//						.stringType("name","Spain")
+//						.stringType("capital", "Madrid")
+//				.closeObject()
+//			.closeObject()
+//        .close();
 
 		return builder.given("provider is available") // NOTE: Using provider states are optional, you can leave it out
 				.uponReceiving("A request for an existing country").path("/").method("POST")

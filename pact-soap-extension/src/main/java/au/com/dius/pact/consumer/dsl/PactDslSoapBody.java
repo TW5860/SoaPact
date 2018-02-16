@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class PactDslSoapBody extends PactDslJsonBody {
-    public static final String NAMESPACE_PREFIX = "#";
+    public static final String NAMESPACE_PREFIX = JSONConverter.JSON_NAMESPACE_SEPARATOR;
 
     private static ReadableHash readableHash = new ReadableHash();
 

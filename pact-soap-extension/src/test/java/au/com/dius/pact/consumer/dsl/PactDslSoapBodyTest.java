@@ -15,8 +15,8 @@ public class PactDslSoapBodyTest {
 				.withNs("http://spring.io/guides/gs-producing-web-service")
 				.fromObject(request, GetCountryRequest.class);
 
-		JSONAssert.assertEquals("{\"#xmlns\": {\"Je\": \"http://spring.io/guides/gs-producing-web-service\"},"
-				+ "\"Je#getCountryRequest\": {\"Je#name\": \"Spain\"}}",
+		JSONAssert.assertEquals("{\"___xmlns\": {\"Je\": \"http://spring.io/guides/gs-producing-web-service\"},"
+				+ "\"Je___getCountryRequest\": {\"Je___name\": \"Spain\"}}",
 				body.toString(), true);
 	}
 }

@@ -1,13 +1,13 @@
 {
-	"#xmlns": {
+	"___xmlns": {
         "ct": "http://spring.io/guides/gs-producing-web-service"
     },
-	"ct#getCountryResponse": {
-		"ct#country": {
-			"ct#name": "Spain",
-			"ct#population": "46704314",
-			"ct#capital": "Madrid",
-			"ct#currency": "EUR"
+	"ct___getCountryResponse": {
+		"ct___country": {
+			"ct___name": "Spain",
+			"ct___population": "46704314",
+			"ct___capital": "Madrid",
+			"ct___currency": "EUR"
 		}
 	}
 }

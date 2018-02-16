@@ -24,7 +24,7 @@ public class JSONConverterTest {
 	
 	@Test
 	public void xmlToJSON_convertsXMLWithNamespacesToJSON() throws Exception {
-		JSONAssert.assertEquals("{\"n1#a\": {b: \"xxx\", c: \"yyy\"}}",
+		JSONAssert.assertEquals("{\"n1___a\": {b: \"xxx\", c: \"yyy\"}}",
 				JSONConverter.xmlToJSON("<n1:a xmlns:n1=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></n1:a>"), true);
 	}
 
@@ -34,7 +34,7 @@ public class JSONConverterTest {
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
 		namespaces.put("http://ze/ns1", "NN1");
 
-		JSONAssert.assertEquals("{\"NN1#a\": {b: \"xxx\", c: \"yyy\"}}",
+		JSONAssert.assertEquals("{\"NN1___a\": {b: \"xxx\", c: \"yyy\"}}",
 				JSONConverter.xmlToJSON("<n1:a xmlns:n1=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></n1:a>",
 								 jsonConfig), true);
 	}
@@ -45,7 +45,7 @@ public class JSONConverterTest {
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
 		namespaces.put("http://ze/ns1", "NN1");
 
-		JSONAssert.assertEquals("{\"NN1#a\": {\"NN1#b\": \"xxx\", \"NN1#c\": \"yyy\"}}",
+		JSONAssert.assertEquals("{\"NN1___a\": {\"NN1___b\": \"xxx\", \"NN1___c\": \"yyy\"}}",
 				JSONConverter.xmlToJSON("<a xmlns=\"http://ze/ns1\"><b>xxx</b><c>yyy</c></a>", jsonConfig), true);
 	}
 	
@@ -81,7 +81,7 @@ public class JSONConverterTest {
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
 		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
 
-		JSONAssert.assertEquals("{\"gd#getCountryRequest\": {\"gd#name\": \"Spain\"}}",
+		JSONAssert.assertEquals("{\"gd___getCountryRequest\": {\"gd___name\": \"Spain\"}}",
 				JSONConverter.objToJSON(request, GetCountryRequest.class, jsonConfig), true);
 	}
 	
@@ -99,12 +99,12 @@ public class JSONConverterTest {
 		Map<String, String> namespaces = jsonConfig.getXmlToJsonNamespaces();
 		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
 
-		String actualXML = JSONConverter.jsonToXML("{a: {\"gd#b\": \"xxx\", c: \"yyy\"}}", jsonConfig);
+		String actualXML = JSONConverter.jsonToXML("{a: {\"gd___b\": \"xxx\", c: \"yyy\"}}", jsonConfig);
 		String expectedXML = "<a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\"><c>yyy</c><gd:b>xxx</gd:b></a>";
 		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
 
 		namespaces.put("http://kkqq.com", "kkqq");
-		actualXML = JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig);
+		actualXML = JSONConverter.jsonToXML("{\"gd___a\": {\"kkqq___b\": \"xxx\", \"kkqq___c\": \"yyy\"}}", jsonConfig);
 		expectedXML = "<gd:a xmlns:gd=\"http://spring.io/guides/gs-producing-web-service\" xmlns:kkqq=\"http://kkqq.com\"><kkqq:c>yyy</kkqq:c><kkqq:b>xxx</kkqq:b></gd:a>";
 		assertThat(actualXML, XMLCompare.isEquivalentXMLTo(expectedXML));
 	}
@@ -116,9 +116,9 @@ public class JSONConverterTest {
 		namespaces.put("http://spring.io/guides/gs-producing-web-service", "gd");
 
 		try {
-			System.out.println(JSONConverter.jsonToXML("{\"gd#a\": {\"kkqq#b\": \"xxx\", \"kkqq#c\": \"yyy\"}}", jsonConfig));
+			System.out.println(JSONConverter.jsonToXML("{\"gd___a\": {\"kkqq___b\": \"xxx\", \"kkqq___c\": \"yyy\"}}", jsonConfig));
 		} catch (JSONException e) {
-			assertThat(e.getMessage(), containsString("kkqq#"));
+			assertThat(e.getMessage(), containsString("kkqq___"));
 			throw e;
 		}
 	}

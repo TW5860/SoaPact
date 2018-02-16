@@ -30,7 +30,7 @@ public class SOAPToJSONConverter {
 		
 		String jsonRequestText = JSONConverter.xmlToJSON(soapRequestXML, jsonConfig);
 		JSONObject jsonRequest = new JSONObject(jsonRequestText);
-		JSONObject payload = jsonRequest.getJSONObject(HASHED_SOAP_NS + "#Envelope").getJSONObject(HASHED_SOAP_NS + "#Body");
+		JSONObject payload = jsonRequest.getJSONObject(HASHED_SOAP_NS + "___Envelope").getJSONObject(HASHED_SOAP_NS + "___Body");
 
 		JSONObject nsObj = new JSONObject();
 		for (Entry<String, String> entry : nsMap.entrySet()) {
@@ -39,7 +39,7 @@ public class SOAPToJSONConverter {
 				nsObj.put(entry.getValue(), nsUri);
 			}
 		}
-		payload.put("#xmlns", nsObj);
+		payload.put("___xmlns", nsObj);
 
 		return payload.toString();
 	}
@@ -56,8 +56,8 @@ public class SOAPToJSONConverter {
 	public static String jsonToSoapResponse(String jsonResponsePayloadText) throws JSONException, XMLStreamException {	
 		JSONObject body = new JSONObject(jsonResponsePayloadText);
 
-		JSONObject nsObj = body.getJSONObject("#xmlns");
-		body.remove("#xmlns");
+		JSONObject nsObj = body.getJSONObject("___xmlns");
+		body.remove("___xmlns");
 
 		Map<String, String> nsMap = new HashMap<>();
 		for (String nsUri : nsObj.keySet()) {
@@ -68,12 +68,12 @@ public class SOAPToJSONConverter {
 		JSONObject jsonResponse = new JSONObject();
 		
 		JSONObject envelope = new JSONObject();
-		jsonResponse.put(HASHED_SOAP_NS + "#Envelope", envelope);
+		jsonResponse.put(HASHED_SOAP_NS + "___Envelope", envelope);
 		
 		JSONObject header = new JSONObject();
-		envelope.put(HASHED_SOAP_NS + "#Header", header);
+		envelope.put(HASHED_SOAP_NS + "___Header", header);
 		
-		envelope.put(HASHED_SOAP_NS + "#Body", body);
+		envelope.put(HASHED_SOAP_NS + "___Body", body);
 		
 		Configuration jsonConfig = makeJSONConfig(nsMap);
 		return JSONConverter.jsonToXML(jsonResponse.toString(), jsonConfig);

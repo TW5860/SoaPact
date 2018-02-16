@@ -1,13 +1,13 @@
 {
-  "Je#getCountryResponse": {
-    "Je#country": {
-      "Je#name": "Spain",
-      "Je#currency": "EUR",
-      "Je#population": 46704314,
-      "Je#capital": "Madrid"
+  "Je___getCountryResponse": {
+    "Je___country": {
+      "Je___name": "Spain",
+      "Je___currency": "EUR",
+      "Je___population": 46704314,
+      "Je___capital": "Madrid"
     }
   },
-  "#xmlns": {
+  "___xmlns": {
     "Je": "http://spring.io/guides/gs-producing-web-service"
   }
 }

@@ -15,11 +15,11 @@
                     "Content-Type": "application/json; charset=UTF-8"
                 },
                 "body": {
-                    "Je#getCountryRequest": {
-                        "Je#name": "Spain"
-                    },
-                    "#xmlns": {
+                    "___xmlns": {
                         "Je": "http://spring.io/guides/gs-producing-web-service"
+                    },
+                    "Je___getCountryRequest": {
+                        "Je___name": "Spain"
                     }
                 }
             },
@@ -29,15 +29,36 @@
                     "Content-Type": "application/json; charset=UTF-8"
                 },
                 "body": {
-                    "Je#getCountryResponse": {
-                        "Je#country": {
-                            "Je#name": "Spain",
-                            "Je#population": 0,
-                            "Je#capital": "Madrid"
+                    "Je___getCountryResponse": {
+                        "Je___country": {
+                            "Je___capital": "Madrid",
+                            "Je___name": "Spain",
+                            "Je___population": 100
                         }
                     },
-                    "#xmlns": {
+                    "___xmlns": {
                         "Je": "http://spring.io/guides/gs-producing-web-service"
+                    }
+                },
+                "matchingRules": {
+                    "body": {
+                        "$.Je___getCountryResponse.Je___country.Je___population": {
+                            "matchers": [
+                                {
+                                    "match": "integer"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
+                },
+                "generators": {
+                    "body": {
+                        "$.Je___getCountryResponse.Je___country.Je___population": {
+                            "type": "RandomInt",
+                            "min": 0,
+                            "max": 2147483647
+                        }
                     }
                 }
             },
